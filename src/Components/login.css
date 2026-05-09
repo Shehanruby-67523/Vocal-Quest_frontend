@@ -1,0 +1,246 @@
+:root {
+  --bg-dark: #00132b;
+  --card-bg: #0b2239;
+  --primary-yellow: #fecb00;
+  --button-blue: #007bff;
+  --text-white: #ffffff;
+  --input-bg: #d1d9e2;
+  --glow: rgba(255, 255, 255, 0.15);
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-white);
+}
+
+.login-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* Logo Styles */
+.header-logo {
+  padding: 40px 0;
+}
+
+.logo-container {
+  text-align: center;
+}
+
+.mic-icon {
+  font-size: 2.5rem;
+  display: block;
+  color: var(--primary-yellow);
+}
+
+.logo-container h1, .logo-container h3 {
+  margin: 10px 0;
+  color: var(--primary-yellow);
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.logo-container span {
+  display: block;
+}
+
+/* Login Card */
+.login-card-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 60px;
+}
+
+.login-card {
+  background-color: var(--card-bg);
+  padding: 40px;
+  border-radius: 40px;
+  width: 400px;
+  box-shadow: 0 0 40px var(--glow);
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.login-card h2 {
+  color: var(--primary-yellow);
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  margin-bottom: 30px;
+}
+
+/* Form Styles */
+.input-group {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  display: block;
+  color: var(--primary-yellow);
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px 15px;
+  border-radius: 12px;
+  border: none;
+  background-color: var(--input-bg);
+  box-sizing: border-box;
+  font-size: 1rem;
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  margin-bottom: 25px;
+}
+
+.checkbox-container {
+  color: var(--primary-yellow);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.checkbox-container input {
+  margin-right: 8px;
+  accent-color: var(--primary-yellow);
+}
+
+.forgot-link {
+  color: var(--primary-yellow);
+  text-decoration: underline;
+}
+
+.login-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  background-color: var(--button-blue);
+  color: white;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s;
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+}
+
+.login-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* Social & Footer inside Card */
+.card-footer {
+  margin-top: 25px;
+}
+
+.signup-link {
+  color: var(--primary-yellow);
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.social-divider {
+  margin: 20px 0;
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.social-icon {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: none;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.google { background: #db4437; }
+.facebook { background: #4267b2; }
+.linkedin { background: #0077b5; }
+
+/* Main Footer Section */
+.main-footer {
+  width: 100%;
+  background-color: #000b1a;
+  padding: 50px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.footer-content {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+.footer-brand {
+  max-width: 300px;
+}
+
+.footer-brand p {
+  font-style: italic;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  opacity: 0.8;
+}
+
+.footer-links {
+  display: flex;
+  gap: 60px;
+}
+
+.link-column h4 {
+  margin-bottom: 20px;
+  font-size: 1rem;
+}
+
+.link-column a {
+  display: block;
+  color: white;
+  text-decoration: none;
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+  opacity: 0.7;
+}
+
+.link-column a:hover {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .footer-content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 40px;
+  }
+  
+  .login-card {
+    width: 90%;
+  }
+}
