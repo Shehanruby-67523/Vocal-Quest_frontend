@@ -1,0 +1,257 @@
+/* 1. Global Variables & Base Styles */
+:root {
+  --bg-main: #000b1a;          /* Deep dark background */
+  --card-bg: #10263d;          /* Slightly lighter card background */
+  --primary-yellow: #fecb00;   /* Brand yellow */
+  --vibrant-blue: #007bff;     /* Sign up button blue */
+  --text-white: #ffffff;
+  --input-bg: #d1d9e2;         /* Grey-blue input background */
+  --glow-color: rgba(255, 255, 255, 0.12);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-white);
+  overflow-x: hidden;
+}
+
+/* 2. Layout Containers */
+.signup-page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* 3. Header Logo Section */
+.page-header {
+  padding: 60px 0 40px 0;
+  text-align: center;
+}
+
+.logo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.main-logo-img {
+  width: 120px; /* Adjusted to match image proportions */
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.logo-text {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--primary-yellow);
+  display: flex;
+  gap: 5px;
+}
+
+/* 4. The Sign-Up Card */
+.form-card-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding-bottom: 80px;
+}
+
+.signup-card {
+  background-color: var(--card-bg);
+  width: 440px;
+  padding: 50px 40px;
+  border-radius: 50px; /* High radius for the "pill" card look */
+  box-shadow: 0 0 50px var(--glow-color);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  text-align: center;
+}
+
+.signup-card h2 {
+  color: var(--primary-yellow);
+  font-size: 2.4rem;
+  margin: 0 0 10px 0;
+  font-weight: 800;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 35px;
+  color: var(--text-white);
+}
+
+/* 5. Form Elements */
+.input-group {
+  text-align: left;
+  margin-bottom: 22px;
+}
+
+.input-group label {
+  display: block;
+  color: var(--primary-yellow);
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 8px;
+  margin-left: 5px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 15px 20px;
+  background-color: var(--input-bg);
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  color: #333;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.input-group input::placeholder {
+  color: #7a8b9a;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 16px;
+  background-color: var(--vibrant-blue);
+  color: var(--text-white);
+  border: none;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: background 0.3s ease;
+}
+
+.submit-btn:hover {
+  background-color: #0069d9;
+}
+
+/* 6. Social Media Section */
+.social-login-section {
+  margin-top: 30px;
+}
+
+.social-divider {
+  font-size: 0.85rem;
+  color: var(--text-white);
+  margin-bottom: 15px;
+  opacity: 0.8;
+}
+
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.social-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+.platform-symbol {
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+/* 7. Footer Section */
+.main-footer {
+  background-color: #000814;
+  width: 100%;
+  padding: 60px 0;
+  margin-top: auto;
+}
+
+.footer-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 30px;
+}
+
+.footer-brand {
+  max-width: 300px;
+}
+
+.footer-brand .logo-text.small {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+}
+
+.footer-description {
+  font-style: italic;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  opacity: 0.8;
+}
+
+.footer-links-wrapper {
+  display: flex;
+  gap: 80px;
+}
+
+.links-column h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.links-column ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.links-column li {
+  margin-bottom: 12px;
+}
+
+.links-column a {
+  color: var(--text-white);
+  text-decoration: none;
+  font-size: 0.85rem;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.links-column a:hover, 
+.links-column a.active-link {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.links-column a.active-link {
+  color: var(--text-white);
+}
+
+/* 8. Responsiveness */
+@media (max-width: 600px) {
+  .signup-card {
+    width: 90%;
+    padding: 30px 20px;
+  }
+  
+  .footer-content {
+    flex-direction: column;
+    gap: 40px;
+    align-items: center;
+    text-align: center;
+  }
+}

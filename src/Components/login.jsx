@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import './login.css';
 
 const Login = () => {
@@ -23,7 +24,6 @@ const Login = () => {
 
   return (
     <div className="login-page">
-      {/* Top Logo Section */}
       <header className="header-logo">
         <div className="logo-container">
           <span className="mic-icon">🎤</span>
@@ -31,7 +31,6 @@ const Login = () => {
         </div>
       </header>
 
-      {/* Main Login Card */}
       <main className="login-card-container">
         <div className="login-card">
           <h2>Log In</h2>
@@ -56,8 +55,7 @@ const Login = () => {
                 type="password" 
                 name="password"
                 placeholder="Enter your password"
-                value={formData.password}
-                onChange={handleChange}
+                value={formData.password}                onChange={handleChange}
                 required
               />
             </div>
@@ -73,14 +71,18 @@ const Login = () => {
                 <span className="checkmark"></span>
                 Remember me
               </label>
-              <a href="#forgot" className="forgot-link">Forgot password?</a>
+              <Link to="/forgotpassword" title="Reset your password" className="forgot-link"> 
+                Forgot password?
+              </Link>
             </div>
 
             <button type="submit" className="login-btn">Login</button>
           </form>
 
           <div className="card-footer">
-            <p>Don't have an account ? <a href="#signup" className="signup-link">Sign up</a></p>
+            <p>Don't have an account ? 
+                <Link to="/signup" className="signup-link"> Sign up</Link>
+            </p>
             <div className="social-divider">
               <span>Or Via Social Media</span>
             </div>
@@ -93,7 +95,6 @@ const Login = () => {
         </div>
       </main>
 
-      {/* Site Footer */}
       <footer className="main-footer">
         <div className="footer-content">
           <div className="footer-brand">
@@ -107,17 +108,17 @@ const Login = () => {
           <div className="footer-links">
             <div className="link-column">
               <h4>Quick Links</h4>
-              <a href="/">Home</a>
-              <a href="/about">About Us</a>
-              <a href="/leaderboard">Leader Board</a>
-              <a href="/contact">Contact Us</a>
+              <Link to="/login">Home</Link>
+              <Link to="#">About Us</Link>
+              <Link to="#">Leader Board</Link>
+              <Link to="#">Contact Us</Link>
             </div>
             <div className="link-column">
               <h4>Features</h4>
-              <a href="/">Home</a>
-              <a href="/about">About Us</a>
-              <a href="/leaderboard">Leader Board</a>
-              <a href="/contact">Contact Us</a>
+              <Link to="/login">Home</Link>
+              <Link to="#">About Us</Link>
+              <Link to="#">Leader Board</Link>
+              <Link to="#">Contact Us</Link>
             </div>
           </div>
         </div>
