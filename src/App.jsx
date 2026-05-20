@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import PrivacyPolicy from './pages/PrivacyPolicy'
-import TermsOfService from './pages/TermsOfService'
+import TermsOfService from './pages/TermsofService'
 import DemonGuardian from './pages/DemonGuardian'
 
 function App() {
