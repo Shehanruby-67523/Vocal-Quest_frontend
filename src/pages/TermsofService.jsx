@@ -39,8 +39,7 @@ function TermsOfService() {
   return (
     <LegalLayout showPrint>
       <div>
-        <p className="text-sm text-slate-400">Back to Sign Up / Terms of Service</p>
-        <h1 className="mt-3 text-4xl font-bold tracking-tight text-slate-100 sm:text-5xl">
+        <h1 className="text-4xl font-bold tracking-tight text-slate-100 sm:text-5xl">
           Terms of Service
         </h1>
         <div className="mt-3 flex items-center gap-2">
