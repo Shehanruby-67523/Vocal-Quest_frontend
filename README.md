@@ -2,7 +2,7 @@
 
 **Vocal Quest** is an accessible, voice-controlled adventure game that enables hands-free gameplay using natural language commands. Built for people with physical disabilities, visual impairments, or anyone seeking an innovative, inclusive gaming experience.
 
-> *“Play with your voice. Enter the castle. Prove your knowledge.”*
+> *"Play with your voice. Enter the castle. Prove your knowledge."*
 
 ---
 
@@ -29,21 +29,22 @@
 
 ## 🧱 Tech Stack
 
-| Area | Technologies |
-|------|--------------|
-| Frontend | HTML5, CSS3, JavaScript, React |
-| Voice & Audio | Web Speech API (Recognition + Synthesis), Web Audio API |
-| Backend | Node.js + Express.js (or Python Flask) |
-| Database | PostgreSQL / MongoDB |
-| Authentication | JWT sessions |
-| Testing | Jest, BrowserStack |
-| Version Control | Git + GitHub |
+| Area             | Technologies                                         |
+|------------------|------------------------------------------------------|
+| Frontend         | HTML5, CSS3, JavaScript, React                       |
+| Voice & Audio    | Web Speech API (Recognition + Synthesis), Web Audio API |
+| Backend          | Node.js + Express.js (or Python Flask)               |
+| Database         | PostgreSQL / MongoDB                                 |
+| Authentication   | JWT sessions                                         |
+| Testing          | Jest, BrowserStack                                   |
+| Version Control  | Git + GitHub                                         |
 
 ---
 
 ## 🚀 Getting Started (Frontend Only)
 
 ### Prerequisites
+
 - Modern browser (Chrome 70+, Firefox, Edge)
 - Microphone (built-in or external)
 - Internet connection
@@ -55,10 +56,11 @@
 git clone https://github.com/Shehanruby-67523/Vocal-Quest_frontend.git
 
 # Navigate to project folder
-cd voice-quest-frontend
+cd Vocal-Quest_frontend
 
-# Install dependencies (if using React)
+# Install dependencies
 npm install
 
 # Run the development server
-npm start
+npm run dev
+```
