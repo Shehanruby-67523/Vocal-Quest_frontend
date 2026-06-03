@@ -1,6 +1,6 @@
-# 🎙️ Voice Quest – AI-Driven Accessible Gaming
+# 🎙️ Vocal Quest – AI-Driven Accessible Gaming
 
-**Voice Quest** is an accessible, voice-controlled adventure game that enables hands-free gameplay using natural language commands. Built for people with physical disabilities, visual impairments, or anyone seeking an innovative, inclusive gaming experience.
+**Vocal Quest** is an accessible, voice-controlled adventure game that enables hands-free gameplay using natural language commands. Built for people with physical disabilities, visual impairments, or anyone seeking an innovative, inclusive gaming experience.
 
 > *“Play with your voice. Enter the castle. Prove your knowledge.”*
 
