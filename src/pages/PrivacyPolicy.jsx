@@ -1,27 +1,35 @@
+import { Link } from 'react-router-dom'
 import CTABanner from '../components/legal/CTABanner'
 import IconBadge from '../components/common/IconBadge'
 import LegalLayout from '../components/legal/LegalLayout'
 import SectionCard from '../components/legal/SectionCard'
+import { LEGAL_LAST_UPDATED } from '../constants/legal'
 
 function PrivacyPolicy() {
   return (
     <LegalLayout>
       <div className="space-y-8">
         <div>
-          <p className="text-sm text-slate-400">Home / Privacy Policy</p>
+          <nav className="text-sm text-slate-400">
+            <Link to="/signup" className="transition hover:text-gold-300">
+              Sign Up
+            </Link>
+            <span className="mx-2">/</span>
+            <span className="text-slate-300">Privacy Policy</span>
+          </nav>
           <h1 className="mt-3 text-4xl font-bold tracking-tight text-slate-100 sm:text-5xl">
             Privacy<span className="text-gold-400">First.</span>
           </h1>
           <p className="mt-4 max-w-2xl text-base text-slate-300">
-            Last updated: October 2023. At Vocal Quest, your voice is yours alone. We believe in
-            radical transparency regarding your data.
+            Last updated: {LEGAL_LAST_UPDATED}. At Vocal Quest, your voice is yours alone. We
+            believe in radical transparency regarding your data.
           </p>
         </div>
 
         <section className="space-y-6">
           <div className="space-y-3">
             <div className="flex items-center gap-3">
-              <IconBadge icon="o" />
+              <IconBadge icon="◎" label="Data collection" />
               <h2 className="text-3xl font-semibold text-slate-100">Data Collection</h2>
             </div>
             <p className="text-slate-300/90">
@@ -42,7 +50,7 @@ function PrivacyPolicy() {
 
           <div className="space-y-3">
             <div className="flex items-center gap-3">
-              <IconBadge icon="*" />
+              <IconBadge icon="♪" label="Voice data usage" />
               <h2 className="text-3xl font-semibold text-slate-100">How We Use Your Voice Data</h2>
             </div>
             <p className="text-slate-300/90">
@@ -68,7 +76,7 @@ function PrivacyPolicy() {
 
           <div className="space-y-3">
             <div className="flex items-center gap-3">
-              <IconBadge icon="v" />
+              <IconBadge icon="⛨" label="Data security" />
               <h2 className="text-3xl font-semibold text-slate-100">Data Security</h2>
             </div>
             <p className="text-slate-300/90">
@@ -80,10 +88,10 @@ function PrivacyPolicy() {
 
           <div className="space-y-3">
             <div className="flex items-center gap-3">
-              <IconBadge icon="!" />
+              <IconBadge icon="✦" label="Your rights" />
               <h2 className="text-3xl font-semibold text-slate-100">Your Rights</h2>
             </div>
-            <SectionCard title="You have full control of your data." compact>
+            <SectionCard title="Data Control" compact>
               <ul className="space-y-2 text-sm text-slate-300">
                 <li>Request a copy of all stored transcripts associated with your account.</li>
                 <li>Withdraw consent for microphone access at any time through your browser.</li>
@@ -93,7 +101,11 @@ function PrivacyPolicy() {
           </div>
         </section>
 
-        <CTABanner primaryText="Sign Up Now" secondaryText="Contact Privacy Team" />
+        <CTABanner
+          primaryText="Sign Up Now"
+          secondaryText="Contact Privacy Team"
+          secondaryTo="mailto:privacy@vocalquest.com"
+        />
       </div>
     </LegalLayout>
   )

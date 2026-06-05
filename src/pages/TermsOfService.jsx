@@ -1,5 +1,7 @@
+import { Link } from 'react-router-dom'
 import CTABanner from '../components/legal/CTABanner'
 import LegalLayout from '../components/legal/LegalLayout'
+import { LEGAL_LAST_UPDATED } from '../constants/legal'
 
 const terms = [
   {
@@ -39,14 +41,21 @@ function TermsOfService() {
   return (
     <LegalLayout showPrint>
       <div>
-        <h1 className="text-4xl font-bold tracking-tight text-slate-100 sm:text-5xl">
+        <nav className="text-sm text-slate-400">
+          <Link to="/signup" className="transition hover:text-gold-300">
+            Sign Up
+          </Link>
+          <span className="mx-2">/</span>
+          <span className="text-slate-300">Terms of Service</span>
+        </nav>
+        <h1 className="mt-3 text-4xl font-bold tracking-tight text-slate-100 sm:text-5xl">
           Terms of Service
         </h1>
         <div className="mt-3 flex items-center gap-2">
           <span className="rounded-full border border-gold-400/40 bg-gold-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-gold-300">
             Effective
           </span>
-          <span className="text-sm text-slate-300">Last updated: October 20, 2023</span>
+          <span className="text-sm text-slate-300">Last updated: {LEGAL_LAST_UPDATED}</span>
         </div>
 
         <div className="mt-8 space-y-8">
@@ -64,7 +73,11 @@ function TermsOfService() {
           ))}
         </div>
 
-        <CTABanner primaryText="I ACCEPT THE TERMS" secondaryText="Cancel" />
+        <CTABanner
+          primaryText="I ACCEPT THE TERMS"
+          secondaryText="Cancel"
+          secondaryTo="/signup"
+        />
       </div>
     </LegalLayout>
   )
