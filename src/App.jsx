@@ -1,9 +1,5 @@
-import Profile from "./pages/Profile";
+import ProfilePage from "./pages/ProfilePage";
 
-function App() {
-  return (
-    <Profile />
-  );
+export default function App() {
+  return <ProfilePage />;
 }
-
-export default App;
