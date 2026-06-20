@@ -20,7 +20,7 @@ export default function ProfileSidebar() {
         @oliviya2000
       </p>
       <p
-        className="text-xs mt-3 leading-relaxed max-w-[200px]"
+        className="text-xs mt-3 leading-relaxed max-w-50"
         style={{ color: colors.textMuted }}
       >
         Speaks confidently, learns daily, and levels up one quiz at a time.
