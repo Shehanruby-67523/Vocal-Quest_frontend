@@ -1,3 +1,4 @@
+import React from "react";
 import { colors } from "../styles/colors";
 
 function Badge({ from, to, children }) {
@@ -13,18 +14,17 @@ function Badge({ from, to, children }) {
 
 export default function AchievementCard({ title, description, icon: Icon, badgeFrom, badgeTo }) {
   return (
-    <div className="rounded-2xl p-5 flex flex-col items-center text-center"
-      style={{ backgroundColor: colors.card }}>
-
+    <div
+      className="rounded-2xl p-5 flex flex-col items-center text-center shadow-md"
+      style={{ backgroundColor: colors.card }}
+    >
       <Badge from={badgeFrom} to={badgeTo}>
-        <Icon size={26} color="#fff" />
+        <Icon size={26} color="#ffffff" strokeWidth={2} />
       </Badge>
-
       <p className="font-bold text-sm" style={{ color: colors.panelDark }}>
         {title}
       </p>
-
-      <p className="text-xs mt-1" style={{ color: colors.cardTextMuted }}>
+      <p className="text-xs mt-1 leading-snug" style={{ color: colors.cardTextMuted }}>
         {description}
       </p>
     </div>

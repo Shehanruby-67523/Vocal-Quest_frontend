@@ -1,3 +1,4 @@
+// Design tokens pulled from the Figma screenshot
 export const colors = {
   page: "#0B1C30",
   nav: "#102744",
