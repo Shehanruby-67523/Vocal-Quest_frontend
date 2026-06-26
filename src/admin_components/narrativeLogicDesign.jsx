@@ -18,51 +18,14 @@ import {
   Lock, 
   ChevronDown 
 } from 'lucide-react';
+import AdminSidebar from '../Components/common/AdminSidebar';
 
 export default function VocalQuestAdmin() {
   const [activeTab, setActiveTab] = useState('Story Maps');
 
   return (
-    <div className="flex h-screen w-screen bg-[#06142e] text-slate-300 font-sans select-none overflow-hidden">
-      
-      {/* 1. LEFT SIDEBAR */}
-      <aside className="w-64 bg-[#0a1931] border-r border-slate-800 flex flex-col justify-between py-6">
-        <div>
-          {/* Logo */}
-          <div className="px-6 mb-8 flex items-center gap-2">
-            <span className="text-xl font-black tracking-wider text-[#ffd300]">
-              VOCAL QUEST <span className="text-white font-medium text-sm tracking-normal ml-1">ADMIN</span>
-            </span>
-          </div>
-
-          {/* Navigation Groups */}
-          <div className="space-y-6">
-            <div>
-              <p className="px-6 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Main Menu</p>
-              <nav className="space-y-1 px-3">
-                <SidebarLink icon={<LayoutDashboard size={18} />} label="Dashboard" active={activeTab === 'Dashboard'} onClick={() => setActiveTab('Dashboard')} />
-                <SidebarLink icon={<Map size={18} />} label="Story Maps" active={activeTab === 'Story Maps'} onClick={() => setActiveTab('Story Maps')} />
-                <SidebarLink icon={<Mic2 size={18} />} label="Voice Assets" active={activeTab === 'Voice Assets'} onClick={() => setActiveTab('Voice Assets')} />
-                <SidebarLink icon={<BarChart3 size={18} />} label="Analytics" active={activeTab === 'Analytics'} onClick={() => setActiveTab('Analytics')} />
-              </nav>
-            </div>
-
-            <div>
-              <p className="px-6 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Settings</p>
-              <nav className="space-y-1 px-3">
-                <SidebarLink icon={<Settings size={18} />} label="Project Settings" active={activeTab === 'Project Settings'} onClick={() => setActiveTab('Project Settings')} />
-              </nav>
-            </div>
-          </div>
-        </div>
-
-        {/* Status Indicator Footer */}
-        <div className="px-6 text-xs text-slate-500 flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span>Live on Production</span>
-          <span className="text-slate-600 ml-1">• Autosaved: 2 mins ago</span>
-        </div>
-      </aside>
+    <div className="flex h-screen w-screen bg-[#070b13] text-slate-300 font-sans select-none overflow-hidden">
+      <AdminSidebar />
 
       {/* RIGHT MAIN CONTENT AREA */}
       <div className="flex-1 flex flex-col h-full overflow-hidden">
