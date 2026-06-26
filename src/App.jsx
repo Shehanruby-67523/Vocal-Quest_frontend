@@ -5,6 +5,7 @@ import ForgotPassword from './Components/forgotpassword'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import TermsOfService from './pages/TermsOfService'
 import DemonGuardian from './pages/DemonGuardian'
+import UserManagement from './pages/UserManagement'
 import NotFound from './pages/NotFound'
 import './App.css'
 
@@ -19,6 +20,9 @@ function App() {
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-of-service" element={<TermsOfService />} />
         <Route path="/demon-guardian" element={<DemonGuardian />} />
+        <Route path="/users" element={<Navigate to="/admin/users" replace />} />
+        <Route path="/admin" element={<Navigate to="/admin/users" replace />} />
+        <Route path="/admin/users" element={<UserManagement />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
