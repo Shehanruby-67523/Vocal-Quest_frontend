@@ -1,8 +1,4 @@
 import ProfilePage from "./pages/Profile";
-
-export default function App() {
-  return <ProfilePage />;
-}
 import { Navigate, Route, Routes } from 'react-router-dom'
 import Login from './Components/login'
 import Signup from './Components/signup'
@@ -30,6 +26,7 @@ function App() {
         <Route path="/terms-of-service" element={<TermsOfService />} />
         <Route path="/demon-guardian" element={<DemonGuardian />} />
         <Route path="/game-hub" element={<GameHub />} />
+        <Route path="/profile" element={<ProfilePage />} />
         <Route path="/users" element={<Navigate to="/admin/users" replace />} />
         <Route path="/admin" element={<Navigate to="/admin/command-center" replace />} />
         <Route path="/admin/command-center" element={<CommandCenter />} />
