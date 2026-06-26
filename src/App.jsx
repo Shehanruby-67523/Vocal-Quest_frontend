@@ -1,3 +1,8 @@
+import ProfilePage from "./pages/Profile";
+
+export default function App() {
+  return <ProfilePage />;
+}
 import { Navigate, Route, Routes } from 'react-router-dom'
 import Login from './Components/login'
 import Signup from './Components/signup'
