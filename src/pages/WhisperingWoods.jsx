@@ -34,7 +34,7 @@ function WhisperingWoods() {
     if (commandCode === 'Inspect the shrine') {
       setNarrationText('You step toward the ancient stone shrine. A soft cyan light grows warmer, whispering forgotten runes.')
     } else if (commandCode === 'Cast light spell') {
-      setNarrationText('A brilliant burst of magical energy flashes from your hand, piercing the darkness and scattering the mist.')
+      setNarrationText('Ancient branches creak above you. The forest awaits your command. Speak clearly to the spirits within the mist.')
     } else if (commandCode === 'Follow the trail') {
       setNarrationText('You venture down the mossy path. The shadows recede slightly, guiding you deeper into the Deepwood Sanctuary.')
     }
