@@ -1,15 +1,56 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+:root {
+  --text: #6b6375;
+  --text-h: #08060d;
+  --bg: #fff;
+  --border: #e5e4e7;
+  --code-bg: #f4f3ec;
+  --accent: #aa3bff;
+  --accent-bg: rgba(170, 59, 255, 0.1);
+  --accent-border: rgba(170, 59, 255, 0.5);
+  --social-bg: rgba(244, 243, 236, 0.5);
+  --shadow:
+    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+}
 
 @layer base {
   html,
   body,
   #root {
     @apply min-h-screen;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   body {
-    @apply m-0 bg-navy-950 font-sans text-slate-200 antialiased;
+    @apply m-0 bg-[#070b13] font-sans text-slate-200 antialiased;
   }
+}
+
+/* Accessibility Theme & Font Overrides */
+html.light-theme-accessibility body {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+html.light-theme-accessibility .bg-\[\#040e21\],
+html.light-theme-accessibility .bg-\[\#0a1122\]\/90,
+html.light-theme-accessibility .bg-\[\#11192e\],
+html.light-theme-accessibility .bg-\[\#0b172a\]\/60,
+html.light-theme-accessibility .bg-\[\#080f1e\],
+html.light-theme-accessibility .bg-\[\#0d162b\] {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+}
+
+html.light-theme-accessibility .text-slate-200,
+html.light-theme-accessibility .text-slate-300,
+html.light-theme-accessibility .text-slate-400,
+html.light-theme-accessibility .text-slate-500 {
+  color: #334155 !important;
+}
+
+html.light-theme-accessibility .border-slate-800\/60,
+html.light-theme-accessibility .border-slate-900 {
+  border-color: #cbd5e1 !important;
 }
