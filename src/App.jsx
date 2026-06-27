@@ -6,6 +6,7 @@ import ForgotPassword from './Components/forgotpassword'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import TermsOfService from './pages/TermsOfService'
 import DemonGuardian from './pages/DemonGuardian'
+import WhisperingWoods from './pages/WhisperingWoods'
 import UserManagement from './pages/UserManagement'
 import NotFound from './pages/NotFound'
 import CommandCenter from './pages/CommandCenter'
@@ -25,6 +26,7 @@ function App() {
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-of-service" element={<TermsOfService />} />
         <Route path="/demon-guardian" element={<DemonGuardian />} />
+        <Route path="/whispering-woods" element={<WhisperingWoods />} />
         <Route path="/game-hub" element={<GameHub />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/users" element={<Navigate to="/admin/users" replace />} />
