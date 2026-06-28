@@ -1,4 +1,5 @@
 import ProfilePage from "./pages/Profile";
+import ManageVoicePrint from "./pages/ManageVoicePrint";
 import { Navigate, Route, Routes } from 'react-router-dom'
 import Login from './Components/login'
 import Signup from './Components/signup'
@@ -31,6 +32,7 @@ function App() {
         <Route path="/whispering-woods" element={<WhisperingWoods />} />
         <Route path="/game-hub" element={<GameHub />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/voice-print" element={<ManageVoicePrint />} />
         <Route path="/users" element={<Navigate to="/admin/users" replace />} />
         <Route path="/admin" element={<Navigate to="/admin/command-center" replace />} />
         <Route path="/admin/command-center" element={<CommandCenter />} />
