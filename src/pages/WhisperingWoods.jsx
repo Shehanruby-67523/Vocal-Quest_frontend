@@ -41,7 +41,7 @@ function WhisperingWoods() {
   }
 
   return (
-    <div className="min-h-screen bg-[#031220] text-slate-100 font-sans flex flex-col justify-between selection:bg-gold-500/30 selection:text-gold-300">
+    <div className="min-h-screen bg-[#001F3F] text-slate-100 font-sans flex flex-col justify-between selection:bg-gold-500/30 selection:text-gold-300">
       {/* Embedded CSS for animations */}
       <style>{`
         @keyframes float {
@@ -86,7 +86,7 @@ function WhisperingWoods() {
       `}</style>
 
       {/* HEADER */}
-      <header className="border-b border-[#0f2d4a]/50 bg-[#041628]/80 backdrop-blur-md sticky top-0 z-50">
+      <header className="border-b border-[#0f2d4a]/50 bg-[#0B263F]/80 backdrop-blur-md sticky top-0 z-50">
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-4">
           
           {/* Logo */}

@@ -1,5 +1,6 @@
 import React from "react";
-import { User } from "lucide-react";
+import { User, Mic } from "lucide-react";
+import { Link } from "react-router-dom";
 import { colors } from "../styles/colors";
 
 export default function ProfileSidebar() {
@@ -25,12 +26,21 @@ export default function ProfileSidebar() {
       >
         Speaks confidently, learns daily, and levels up one quiz at a time.
       </p>
-      <button
-        className="mt-6 px-6 py-2 rounded-lg font-bold text-xs tracking-wide"
-        style={{ backgroundColor: colors.gold, color: colors.panelDark }}
-      >
-        EDIT PROFILE
-      </button>
+      <div className="flex flex-col gap-2 mt-6 w-full px-4">
+        <button
+          className="w-full py-2.5 rounded-lg font-bold text-xs tracking-wide cursor-pointer transition-all hover:opacity-90"
+          style={{ backgroundColor: colors.gold, color: colors.panelDark }}
+        >
+          EDIT PROFILE
+        </button>
+        <Link
+          to="/voice-print"
+          className="w-full py-2.5 rounded-lg font-bold text-xs tracking-wide border border-[#EFB034]/40 hover:border-[#EFB034] hover:bg-[#EFB034]/5 text-[#EFB034] hover:text-white transition-all text-center flex items-center justify-center gap-1.5 cursor-pointer"
+        >
+          <Mic size={14} />
+          MANAGE VOICE PRINT
+        </Link>
+      </div>
     </aside>
   );
 }
