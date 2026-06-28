@@ -13,18 +13,20 @@ import CommandCenter from './pages/CommandCenter'
 import VocalQuestAdmin from './admin_components/narrativeLogicDesign'
 import PlaceholderAdminPage from './pages/PlaceholderAdminPage'
 import GameHub from './pages/GameHub'
+import PlayerJourney from './pages/PlayerJourney'
 import './App.css'
 
 function App() {
   return (
     <div className="app-container">
       <Routes>
-        <Route path="/" element={<Navigate to="/demon-guardian" replace />} />
+        <Route path="/" element={<Navigate to="/player-journey" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-of-service" element={<TermsOfService />} />
+        <Route path="/player-journey" element={<PlayerJourney />} />
         <Route path="/demon-guardian" element={<DemonGuardian />} />
         <Route path="/whispering-woods" element={<WhisperingWoods />} />
         <Route path="/game-hub" element={<GameHub />} />

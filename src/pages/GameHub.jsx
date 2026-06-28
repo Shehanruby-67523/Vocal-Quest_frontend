@@ -34,7 +34,7 @@ export default function GameHub() {
   );
 
   return (
-    <div className="min-h-screen bg-[#040e21] text-slate-200 font-sans flex flex-col transition-colors duration-300 relative select-none">
+    <div className="min-h-screen bg-[#001F3F] text-slate-200 font-sans flex flex-col transition-colors duration-300 relative select-none">
       
       {/* Top Global Navigation with Search bar and toggles */}
       <GlobalNavigation 

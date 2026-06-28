@@ -61,7 +61,7 @@ export default function GlobalNavigation({
   };
 
   return (
-    <header className="h-16 bg-[#0a1122]/90 border-b border-slate-800/60 flex items-center justify-between px-6 sticky top-0 z-50 backdrop-blur-md select-none transition-colors duration-300">
+    <header className="h-16 bg-[#0B263F]/80 border-b border-slate-800/60 flex items-center justify-between px-6 sticky top-0 z-50 backdrop-blur-md select-none transition-colors duration-300">
       
       {/* Left section: Logo & Accessibility Controls */}
       <div className="flex items-center gap-6">

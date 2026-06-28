@@ -395,7 +395,7 @@ function DemonGuardian() {
       `}</style>
 
       {/* HEADER - Clean and matches figma mockup exactly */}
-      <header className="border-b border-[#0f2d4a]/50 bg-[#152D4A]/80 backdrop-blur-md sticky top-0 z-50">
+      <header className="border-b border-[#0f2d4a]/50 bg-[#0B263F]/80 backdrop-blur-md sticky top-0 z-50">
         <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-4">
           <Link to="/game-hub" className="transition-transform hover:scale-102">
             <Logo />
