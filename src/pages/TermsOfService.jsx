@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import CTABanner from '../components/legal/CTABanner'
-import LegalLayout from '../components/legal/LegalLayout'
+import CTABanner from '../Components/legal/CTABanner'
+import LegalLayout from '../Components/legal/LegalLayout'
 import { LEGAL_LAST_UPDATED } from '../constants/legal'
 
 const terms = [

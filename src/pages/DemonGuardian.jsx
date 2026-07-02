@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Lightbulb, Flag, Check, X, Trophy, ArrowRight, RotateCcw } from 'lucide-react'
-import Logo from '../Components/Logo'
+// eslint-disable-next-line no-unused-vars
+import Logo from './Components/Logo.jsx'
 
 // Game Questions conforming to the Gatekeeper's Challenge Quiz
 const QUESTIONS = [
@@ -47,10 +48,10 @@ const hasSpeechSupport = typeof window !== 'undefined' && !!(window.SpeechRecogn
 
 function DemonGuardian() {
   const navigate = useNavigate()
-  
+
   // Encounter Flow: starts directly at 'QUIZ' to match the uploaded figma mockup exactly
   const [encounterState, setEncounterState] = useState('QUIZ')
-  
+
   // Quiz & standing states
   const [score, setScore] = useState(32) // Starts at 32/50 as shown in screenshot
   const [currentIdx, setCurrentIdx] = useState(0)
@@ -59,14 +60,14 @@ function DemonGuardian() {
   const [hintsLeft, setHintsLeft] = useState(3)
   const [showHint, setShowHint] = useState(false)
   const [shakeCard, setShakeCard] = useState(false)
-  
+
   // Voice integration states (listening in background)
   const [isListening, setIsListening] = useState(true)
   const [isMuted, setIsMuted] = useState(false)
   const [recognizedCommand, setRecognizedCommand] = useState('')
   const [wavePulse, setWavePulse] = useState(false)
   const [speechFeedback, setSpeechFeedback] = useState('')
-  
+
   // Modal states
   const [showForfeitModal, setShowForfeitModal] = useState(false)
 
@@ -154,7 +155,7 @@ function DemonGuardian() {
     const cleanTranscript = transcript.replace(/[.,#!?]/g, "").trim().toLowerCase();
     setSpeechFeedback(`Heard voice command: "${cleanTranscript}"`)
     setRecognizedCommand(cleanTranscript)
-    
+
     // Trigger equalizer wave pulse directly on recognition
     setWavePulse(true)
     setTimeout(() => setWavePulse(false), 1200)
@@ -184,44 +185,44 @@ function DemonGuardian() {
     // 3. QUIZ STATE COMMANDS
     if (curState === 'QUIZ') {
       const optionsList = QUESTIONS[stateRef.current.currentIdx].options
-      
+
       // Broader and more error-tolerant transcript matching rules (removing punctuation first)
-      const matchA = cleanTranscript === 'a' || 
-                     cleanTranscript.includes('select a') || 
-                     cleanTranscript.includes('option a') || 
-                     cleanTranscript.includes('alpha') || 
-                     cleanTranscript.includes('first') || 
-                     cleanTranscript.includes('one') || 
-                     cleanTranscript.includes('ignis') || 
-                     cleanTranscript.includes('tacitus')
-      
-      const matchB = cleanTranscript === 'b' || 
-                     cleanTranscript.includes('select b') || 
-                     cleanTranscript.includes('option b') || 
-                     cleanTranscript.includes('bravo') || 
-                     cleanTranscript.includes('second') || 
-                     cleanTranscript.includes('two') || 
-                     cleanTranscript.includes('flamina') || 
-                     cleanTranscript.includes('rubra')
-      
-      const matchC = cleanTranscript === 'c' || 
-                     cleanTranscript.includes('select c') || 
-                     cleanTranscript.includes('option c') || 
-                     cleanTranscript.includes('charlie') || 
-                     cleanTranscript.includes('third') || 
-                     cleanTranscript.includes('three') || 
-                     cleanTranscript.includes('aetheris') || 
-                     cleanTranscript.includes('silentium')
-      
-      const matchD = cleanTranscript === 'd' || 
-                     cleanTranscript.includes('select d') || 
-                     cleanTranscript.includes('option d') || 
-                     cleanTranscript.includes('delta') || 
-                     cleanTranscript.includes('fourth') || 
-                     cleanTranscript.includes('four') || 
-                     cleanTranscript.includes('sol') || 
-                     cleanTranscript.includes('invictus')
-      
+      const matchA = cleanTranscript === 'a' ||
+        cleanTranscript.includes('select a') ||
+        cleanTranscript.includes('option a') ||
+        cleanTranscript.includes('alpha') ||
+        cleanTranscript.includes('first') ||
+        cleanTranscript.includes('one') ||
+        cleanTranscript.includes('ignis') ||
+        cleanTranscript.includes('tacitus')
+
+      const matchB = cleanTranscript === 'b' ||
+        cleanTranscript.includes('select b') ||
+        cleanTranscript.includes('option b') ||
+        cleanTranscript.includes('bravo') ||
+        cleanTranscript.includes('second') ||
+        cleanTranscript.includes('two') ||
+        cleanTranscript.includes('flamina') ||
+        cleanTranscript.includes('rubra')
+
+      const matchC = cleanTranscript === 'c' ||
+        cleanTranscript.includes('select c') ||
+        cleanTranscript.includes('option c') ||
+        cleanTranscript.includes('charlie') ||
+        cleanTranscript.includes('third') ||
+        cleanTranscript.includes('three') ||
+        cleanTranscript.includes('aetheris') ||
+        cleanTranscript.includes('silentium')
+
+      const matchD = cleanTranscript === 'd' ||
+        cleanTranscript.includes('select d') ||
+        cleanTranscript.includes('option d') ||
+        cleanTranscript.includes('delta') ||
+        cleanTranscript.includes('fourth') ||
+        cleanTranscript.includes('four') ||
+        cleanTranscript.includes('sol') ||
+        cleanTranscript.includes('invictus')
+
       if (matchA) {
         selectOption(optionsList[0])
       } else if (matchB) {
@@ -342,7 +343,7 @@ function DemonGuardian() {
 
   return (
     <div className="min-h-screen bg-[#001F3F] text-slate-100 font-sans flex flex-col justify-between selection:bg-[#cba33f]/30 selection:text-[#cba33f]">
-      
+
       {/* CSS animations */}
       <style>{`
         @keyframes shake {
@@ -405,7 +406,7 @@ function DemonGuardian() {
 
       {/* MAIN CONTAINER */}
       <main className="flex-grow mx-auto w-full max-w-4xl px-6 py-6 md:py-10 flex flex-col justify-center">
-        
+
         {/* SPEECH STATUS FEEDBACK */}
         {speechFeedback && (
           <div className="text-center py-2 px-4 mb-4 rounded-lg bg-slate-800/40 border border-slate-700/30 max-w-md mx-auto animate-pulse">
@@ -415,7 +416,7 @@ function DemonGuardian() {
 
         {encounterState === 'QUIZ' && (
           <div className="space-y-6 md:space-y-8">
-            
+
             {/* CURRENT STANDING SECTION - Styled exactly as shown in figma mockup */}
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 w-full">
               <div className="flex-1">
@@ -427,19 +428,19 @@ function DemonGuardian() {
                 {/* Custom Progress Bar */}
                 <div className="relative mt-4 h-3 w-full rounded-full bg-[#0c1a30] overflow-hidden border border-slate-800">
                   {/* Filled gold bar */}
-                  <div 
-                    className="h-full bg-gradient-to-r from-[#dcae3a] to-[#f4d16d] rounded-full transition-all duration-500 shadow-[0_0_8px_rgba(220,174,58,0.3)]" 
+                  <div
+                    className="h-full bg-gradient-to-r from-[#dcae3a] to-[#f4d16d] rounded-full transition-all duration-500 shadow-[0_0_8px_rgba(220,174,58,0.3)]"
                     style={{ width: `${(score / 50) * 100}%` }}
                   />
                   {/* Requirement tick line at 80% */}
-                  <div 
-                    className="absolute top-0 bottom-0 w-[2px] bg-white opacity-80" 
+                  <div
+                    className="absolute top-0 bottom-0 w-[2px] bg-white opacity-80"
                     style={{ left: '80%' }}
                     title="Required score to pass: 40 (80%)"
                   />
                 </div>
               </div>
-              
+
               {/* Requirement badge */}
               <div className="flex flex-col items-center sm:items-end flex-shrink-0 min-w-[120px]">
                 <span className="text-[10px] uppercase tracking-wider text-[#8e9bb0] font-medium mb-1">Requirement</span>
@@ -453,7 +454,7 @@ function DemonGuardian() {
             <div className="relative rounded-2xl border border-slate-700/40 bg-[#091b33] p-8 md:p-10 shadow-[0_8px_24px_rgba(0,0,0,0.35)] overflow-hidden">
               {/* Gold gradient top highlight */}
               <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#cba33f] to-transparent" />
-              
+
               {/* Sparkle icons */}
               <div className="flex justify-center mb-6">
                 <svg className="w-8 h-8 text-[#cba33f] animate-pulse-gold" viewBox="0 0 24 24" fill="currentColor">
@@ -479,7 +480,7 @@ function DemonGuardian() {
               {currentQuestion.options.map((option) => {
                 const isSelected = selectedKey === option.key
                 const isCorrect = option.isCorrect
-                
+
                 let cardClass = borderColors[option.theme] + ' bg-[#0c1a30] hover:bg-[#0d2547] border'
                 if (isSelected) {
                   if (isCorrect) {
@@ -508,7 +509,7 @@ function DemonGuardian() {
                           {option.label}
                         </span>
                       </div>
-                      
+
                       {/* Success / Error Icons */}
                       {isSelected && (
                         <span>
@@ -547,11 +548,10 @@ function DemonGuardian() {
                 type="button"
                 onClick={handleUseHint}
                 disabled={hintsLeft === 0 || showHint || isAnswered}
-                className={`flex items-center gap-2 rounded-lg border px-5 py-2.5 text-xs font-bold transition-all uppercase tracking-wider ${
-                  hintsLeft === 0 || showHint || isAnswered
-                    ? 'border-slate-800 text-slate-500 bg-slate-900/40 cursor-not-allowed'
-                    : 'border-[#cba33f]/50 text-[#cba33f] bg-[#cba33f]/5 hover:bg-[#cba33f]/15 hover:border-[#cba33f] cursor-pointer'
-                }`}
+                className={`flex items-center gap-2 rounded-lg border px-5 py-2.5 text-xs font-bold transition-all uppercase tracking-wider ${hintsLeft === 0 || showHint || isAnswered
+                  ? 'border-slate-800 text-slate-500 bg-slate-900/40 cursor-not-allowed'
+                  : 'border-[#cba33f]/50 text-[#cba33f] bg-[#cba33f]/5 hover:bg-[#cba33f]/15 hover:border-[#cba33f] cursor-pointer'
+                  }`}
               >
                 <Lightbulb className="w-4 h-4" />
                 Use Hint ({hintsLeft} Left)
@@ -582,7 +582,7 @@ function DemonGuardian() {
               <h1 className="text-3xl font-black text-white tracking-wide">Challenge Completed!</h1>
               <p className="text-gold-300 font-bold uppercase tracking-widest text-[11px] mt-2">Gatekeeper's Quiz • Stage IV-VI Passed</p>
             </div>
-            
+
             <div className="py-6 px-4 rounded-xl bg-[#051327]/60 border border-slate-700/30">
               <p className="text-slate-400 text-xs uppercase tracking-wider">Final Standing</p>
               <div className="flex items-center justify-center gap-3 mt-2">
@@ -619,21 +619,20 @@ function DemonGuardian() {
 
         {/* BOTTOM VOICE DECK PANEL - Reuses identical voice layout from WhisperingWoods */}
         <div className="mt-10 flex flex-wrap items-center justify-between gap-6 bg-[#041628]/35 border border-[#0f3458]/30 p-5 rounded-2xl backdrop-blur-md shadow-inner">
-          
+
           {/* LEFT: VOICE STATUS BOX */}
           <div className="flex items-center gap-4">
-            
+
             {/* Visual Equalizer Circle */}
-            <div 
+            <div
               onClick={() => setIsListening(!isListening)}
-              className={`w-14 h-14 rounded-full flex items-center justify-center bg-[#031220] border-2 cursor-pointer transition-all duration-300 ${
-                isListening 
-                  ? 'border-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.25)] hover:shadow-[0_0_20px_rgba(34,211,238,0.45)]' 
-                  : 'border-rose-500/50 shadow-[0_0_10px_rgba(239,68,68,0.15)] hover:shadow-[0_0_15px_rgba(239,68,68,0.3)]'
-              }`}
+              className={`w-14 h-14 rounded-full flex items-center justify-center bg-[#031220] border-2 cursor-pointer transition-all duration-300 ${isListening
+                ? 'border-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.25)] hover:shadow-[0_0_20px_rgba(34,211,238,0.45)]'
+                : 'border-rose-500/50 shadow-[0_0_10px_rgba(239,68,68,0.15)] hover:shadow-[0_0_15px_rgba(239,68,68,0.3)]'
+                }`}
               style={{
-                animation: isListening 
-                  ? 'pulseGlow 2.5s infinite ease-in-out' 
+                animation: isListening
+                  ? 'pulseGlow 2.5s infinite ease-in-out'
                   : 'pulseGlowMuted 3s infinite ease-in-out'
               }}
               title={isListening ? 'Microphone Active' : 'Microphone Inactive'}
@@ -663,9 +662,8 @@ function DemonGuardian() {
               <span className="text-slate-500 text-[9px] font-bold tracking-[0.2em] uppercase">
                 Voice Status
               </span>
-              <span className={`text-sm font-bold tracking-wide transition-colors duration-300 mt-0.5 flex items-center gap-1.5 ${
-                isListening ? 'text-cyan-400' : 'text-slate-500'
-              }`}>
+              <span className={`text-sm font-bold tracking-wide transition-colors duration-300 mt-0.5 flex items-center gap-1.5 ${isListening ? 'text-cyan-400' : 'text-slate-500'
+                }`}>
                 {isListening ? (
                   <>
                     Listening...
@@ -679,7 +677,7 @@ function DemonGuardian() {
                   'Offline'
                 )}
               </span>
-              
+
               <div className="text-[11px] text-slate-400 mt-1.5 flex flex-wrap items-center gap-1">
                 <span>"Command Recognized:</span>
                 <span className="text-[#cba33f] font-bold">
@@ -692,15 +690,14 @@ function DemonGuardian() {
 
           {/* CENTER: PILL CONTROLS */}
           <div className="flex items-center bg-[#031220]/80 border border-[#0f3458]/70 px-4 py-2.5 rounded-full shadow-2xl">
-            
+
             {/* Microphone Toggle (Gold pill) */}
             <button
               onClick={() => setIsListening(!isListening)}
-              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 transform active:scale-95 cursor-pointer ${
-                isListening
-                  ? 'bg-[#cba33f] text-[#031220] shadow-[0_0_12px_rgba(203,163,63,0.3)] hover:brightness-105'
-                  : 'bg-rose-600 text-white shadow-[0_0_12px_rgba(239,68,68,0.3)] hover:bg-rose-700'
-              }`}
+              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 transform active:scale-95 cursor-pointer ${isListening
+                ? 'bg-[#cba33f] text-[#031220] shadow-[0_0_12px_rgba(203,163,63,0.3)] hover:brightness-105'
+                : 'bg-rose-600 text-white shadow-[0_0_12px_rgba(239,68,68,0.3)] hover:bg-rose-700'
+                }`}
               title={isListening ? 'Mute Microphone' : 'Activate Microphone'}
             >
               {isListening ? (
@@ -722,9 +719,9 @@ function DemonGuardian() {
 
             {/* Pill secondary utilities */}
             <div className="flex items-center gap-2">
-              
+
               {/* Help button */}
-              <button 
+              <button
                 onClick={handleUseHint}
                 className="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800/35 transition-colors cursor-pointer"
                 title="Use a hint"
@@ -733,7 +730,7 @@ function DemonGuardian() {
               </button>
 
               {/* Forfeit button */}
-              <button 
+              <button
                 onClick={() => setShowForfeitModal(true)}
                 className="p-2 text-slate-400 hover:text-rose-500 rounded-lg hover:bg-slate-800/35 transition-colors cursor-pointer"
                 title="Forfeit challenge"
@@ -742,11 +739,10 @@ function DemonGuardian() {
               </button>
 
               {/* Mute/Unmute Audio indicator */}
-              <button 
+              <button
                 onClick={() => setIsMuted(!isMuted)}
-                className={`p-2 rounded-lg hover:bg-slate-800/35 transition-all cursor-pointer ${
-                  isMuted ? 'text-rose-500' : 'text-slate-400 hover:text-white'
-                }`}
+                className={`p-2 rounded-lg hover:bg-slate-800/35 transition-all cursor-pointer ${isMuted ? 'text-rose-500' : 'text-slate-400 hover:text-white'
+                  }`}
                 title={isMuted ? 'Unmute Audio' : 'Mute Audio'}
               >
                 {isMuted ? (

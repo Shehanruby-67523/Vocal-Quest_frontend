@@ -37,7 +37,8 @@ body {
   color: var(--primary-yellow);
 }
 
-.logo-container h1, .logo-container h3 {
+.logo-container h1,
+.logo-container h3 {
   margin: 10px 0;
   color: var(--primary-yellow);
   font-weight: 700;
@@ -77,6 +78,40 @@ body {
   font-size: 0.9rem;
   opacity: 0.9;
   margin-bottom: 30px;
+}
+
+/* Role Selection Switcher */
+.role-selection {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 25px;
+  justify-content: center;
+}
+
+.role-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--text-white);
+  padding: 10px 20px;
+  border-radius: 12px;
+  /* Matches form inputs and submit button rounding */
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+}
+
+.role-btn:hover {
+  border-color: var(--primary-yellow);
+  background-color: rgba(254, 203, 0, 0.05);
+}
+
+.role-btn.active {
+  background-color: var(--primary-yellow);
+  color: var(--bg-dark);
+  /* Dark blue contrast color */
+  border-color: var(--primary-yellow);
+  font-weight: bold;
+  box-shadow: 0 4px 12px rgba(254, 203, 0, 0.2);
 }
 
 /* Form Styles */
@@ -178,9 +213,17 @@ body {
   cursor: pointer;
 }
 
-.google { background: #db4437; }
-.facebook { background: #4267b2; }
-.linkedin { background: #0077b5; }
+.google {
+  background: #db4437;
+}
+
+.facebook {
+  background: #4267b2;
+}
+
+.linkedin {
+  background: #0077b5;
+}
 
 /* Main Footer Section */
 .main-footer {
@@ -239,7 +282,7 @@ body {
     text-align: center;
     gap: 40px;
   }
-  
+
   .login-card {
     width: 90%;
   }

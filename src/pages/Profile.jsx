@@ -1,11 +1,11 @@
 import React from "react";
 import { Medal, Compass, ShieldCheck, Gem, CheckCircle2 } from "lucide-react";
 
-import Navbar from "../components/Navbar";
-import ProfileSidebar from "../components/ProfileSidebar";
-import AchievementCard from "../components/AchievementCard";
-import StatisticCard from "../components/StatisticCard";
-import Footer from "../components/Footer";
+import Navbar from "../Components/Navbar";
+import ProfileSidebar from "../Components/ProfileSidebar";
+import AchievementCard from "../Components/AchievementCard";
+import StatisticCard from "../Components/StatisticCard";
+import Footer from "../Components/Footer";
 import { colors } from "../styles/colors";
 
 const achievements = [

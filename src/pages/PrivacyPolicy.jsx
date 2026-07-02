@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
-import CTABanner from '../components/legal/CTABanner'
-import IconBadge from '../components/common/IconBadge'
-import LegalLayout from '../components/legal/LegalLayout'
-import SectionCard from '../components/legal/SectionCard'
+import CTABanner from '../Components/legal/CTABanner'
+import IconBadge from '../Components/common/IconBadge'
+import LegalLayout from '../Components/legal/LegalLayout'
+import SectionCard from '../Components/legal/SectionCard'
 import { LEGAL_LAST_UPDATED } from '../constants/legal'
 
 function PrivacyPolicy() {

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './login.css';
 
 const Login = () => {
+  const navigate = useNavigate();
+  const [role, setRole] = useState('user');
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -17,9 +19,22 @@ const Login = () => {
     }));
   };
 
+  const handleRoleChange = (selectedRole) => {
+    setRole(selectedRole);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Logging in with:', formData);
+    console.log(`Logging in as ${role} with:`, formData);
+
+    // Perform authentication logic here...
+
+    // Post-authentication routing logic:
+    if (role === 'admin') {
+      navigate('/admin'); // Redirect to Admin Panel/Command Center
+    } else {
+      navigate('/demon-guardian'); // Redirect to Demon Guardian landing page
+    }
   };
 
   return (
@@ -36,11 +51,29 @@ const Login = () => {
           <h2>Log In</h2>
           <p className="subtitle">Log in to your account and seamlessly play game</p>
 
+          {/* Role Selection Tabs */}
+          <div className="role-selection">
+            <button
+              type="button"
+              className={`role-btn ${role === 'user' ? 'active' : ''}`}
+              onClick={() => handleRoleChange('user')}
+            >
+              Login as User
+            </button>
+            <button
+              type="button"
+              className={`role-btn ${role === 'admin' ? 'active' : ''}`}
+              onClick={() => handleRoleChange('admin')}
+            >
+              Login as Admin
+            </button>
+          </div>
+
           <form onSubmit={handleSubmit}>
             <div className="input-group">
               <label>Username</label>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 name="username"
                 placeholder="Enter your username"
                 value={formData.username}
@@ -51,19 +84,20 @@ const Login = () => {
 
             <div className="input-group">
               <label>Password</label>
-              <input 
-                type="password" 
+              <input
+                type="password"
                 name="password"
                 placeholder="Enter your password"
-                value={formData.password}                onChange={handleChange}
+                value={formData.password}
+                onChange={handleChange}
                 required
               />
             </div>
 
             <div className="form-options">
               <label className="checkbox-container">
-                <input 
-                  type="checkbox" 
+                <input
+                  type="checkbox"
                   name="rememberMe"
                   checked={formData.rememberMe}
                   onChange={handleChange}
@@ -71,17 +105,19 @@ const Login = () => {
                 <span className="checkmark"></span>
                 Remember me
               </label>
-              <Link to="/forgotpassword" title="Reset your password" className="forgot-link"> 
+              <Link to="/forgotpassword" title="Reset your password" className="forgot-link">
                 Forgot password?
               </Link>
             </div>
 
-            <button type="submit" className="login-btn">Login</button>
+            <button type="submit" className="login-btn">
+              Login as {role === 'admin' ? 'Admin' : 'User'}
+            </button>
           </form>
 
           <div className="card-footer">
-            <p>Don't have an account ? 
-                <Link to="/signup" className="signup-link"> Sign up</Link>
+            <p>Don't have an account ?
+              <Link to="/signup" className="signup-link"> Sign up</Link>
             </p>
             <div className="social-divider">
               <span>Or Via Social Media</span>
@@ -104,7 +140,7 @@ const Login = () => {
             </div>
             <p>“Enhance your speaking and learning through interactive quizzes.”</p>
           </div>
-          
+
           <div className="footer-links">
             <div className="link-column">
               <h4>Quick Links</h4>
