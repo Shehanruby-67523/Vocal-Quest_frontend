@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Lightbulb, Flag, Check, X, Trophy, ArrowRight, RotateCcw } from 'lucide-react'
-// eslint-disable-next-line no-unused-vars
-import Logo from './Components/Logo.jsx'
+import Logo from './Components/Logo'
 
 // Game Questions conforming to the Gatekeeper's Challenge Quiz
 const QUESTIONS = [
