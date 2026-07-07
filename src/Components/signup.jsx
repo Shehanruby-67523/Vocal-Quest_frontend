@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './signup.css'; 
 
 const Signup = () => {
+  const navigate = useNavigate();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -10,7 +12,8 @@ const Signup = () => {
     event.preventDefault();
     // Logic for handling the sign-up process (e.g., API call)
     console.log('Signing up with:', { name, email, password });
-    // You could reset the form or redirect to another page here
+    // Redirect to the demon guardian quiz page on successful signup
+    navigate('/demon-guardian');
   };
 
   const handleSocialLogin = (platform) => {
