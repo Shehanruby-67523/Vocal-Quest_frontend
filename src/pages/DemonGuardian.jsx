@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Lightbulb, Flag, Check, X, Trophy, ArrowRight, RotateCcw } from 'lucide-react'
-
+import Logo from '../Components/Logo'
 // Game Questions conforming to the Gatekeeper's Challenge Quiz
 const QUESTIONS = [
   {
