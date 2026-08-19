@@ -52,6 +52,12 @@ function WhisperingWoods() {
       'cast, light, spell, illuminate, shine': () => handleAction('Cast light', 'Cast light spell'),
       'follow, trail, path, walk, go': () => handleAction('Follow trail', 'Follow the trail'),
       'demon, guardian, next, continue, proceed': () => handleAction('Demon Guardian', 'Demon Guardian'),
+      'dashboard, journey': () => navigate('/player-journey'),
+      'game hub, hub': () => navigate('/game-hub'),
+      'achievements, achievement': () => navigate('/achievements'),
+      'profile': () => navigate('/profile'),
+      'voice print, voiceprint': () => navigate('/voice-print'),
+      'settings, options': () => navigate('/settings'),
     }),
     [navigate]
   )
@@ -65,15 +71,37 @@ function WhisperingWoods() {
     stopListening,
   } = useVoiceCommands(commandMap)
 
-  // 3. Announce narration/question when text updates & start listening after voice finishes
+  // Toggle Handler for Microphone & Voice Narration
+  const toggleMicrophoneVoice = () => {
+    if (isListening || !isMuted) {
+      stop()
+      stopListening()
+      setIsMuted(true)
+    } else {
+      setIsMuted(false)
+      if (narrationText) {
+        speak(narrationText, () => {
+          startListening()
+        })
+      } else {
+        startListening()
+      }
+    }
+  }
+
+  // 3. Announce narration/question when text updates & handle mute state
   useEffect(() => {
     if (narrationText && !isMuted) {
       speak(narrationText, () => {
-        // Automatically start listening for spoken commands when speech completes
-        startListening()
+        if (!isMuted) {
+          startListening()
+        }
       })
+    } else if (isMuted) {
+      stop()
+      stopListening()
     }
-  }, [narrationText, isMuted, speak, startListening])
+  }, [narrationText, isMuted, speak, stop, startListening, stopListening])
 
   return (
     <div className="min-h-screen bg-[#001F3F] text-slate-100 font-sans flex flex-col justify-between selection:bg-gold-500/30 selection:text-gold-300">
@@ -124,29 +152,34 @@ function WhisperingWoods() {
       <header className="border-b border-[#0f2d4a]/50 bg-[#0B263F]/80 backdrop-blur-md sticky top-0 z-50">
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-4">
 
-          {/* Logo */}
-          <Link to="/demon-guardian" className="flex items-center gap-2.5 group">
-            <div className="flex h-7 w-7 items-center justify-center rounded bg-[#d9b74f] text-[#031220] font-black text-sm tracking-tighter shadow-[0_0_10px_rgba(217,183,79,0.2)] transition-transform group-hover:scale-105">
-              VQ
-            </div>
-            <span className="text-sm font-black uppercase tracking-[0.25em] text-white group-hover:text-gold-300 transition-colors">
-              Vocal Quest
-            </span>
+          {/* Game Logo */}
+          <Link to="/demon-guardian" className="flex items-center gap-3 group" title="Vocal Quest Home">
+            <img
+              src="/pvmT4-removebg-preview.png"
+              alt="Vocal Quest Logo"
+              className="h-12 w-auto max-w-[180px] object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-[0_0_10px_rgba(217,183,79,0.3)]"
+              onError={(e) => {
+                e.target.src = "/src/assets/logo.png";
+              }}
+            />
           </Link>
 
           {/* Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            {['DASHBOARD', 'RESULTS', 'ACHIEVEMENTS', 'SETTINGS'].map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`text-[11px] font-bold tracking-[0.2em] transition-all duration-200 cursor-pointer ${activeTab === tab
-                  ? 'text-[#d9b74f] drop-shadow-[0_0_8px_rgba(217,183,79,0.3)]'
-                  : 'text-slate-400 hover:text-slate-100'
-                  }`}
+            {[
+              { name: 'DASHBOARD', path: '/player-journey' },
+              { name: 'GAME HUB', path: '/game-hub' },
+              { name: 'ACHIEVEMENTS', path: '/achievements' },
+              { name: 'VOICE PRINT', path: '/voice-print' },
+              { name: 'SETTINGS', path: '/settings' },
+            ].map((tab) => (
+              <Link
+                key={tab.name}
+                to={tab.path}
+                className="text-[11px] font-bold tracking-[0.2em] transition-all duration-200 cursor-pointer text-slate-400 hover:text-[#d9b74f] hover:drop-shadow-[0_0_8px_rgba(217,183,79,0.3)]"
               >
-                {tab}
-              </button>
+                {tab.name}
+              </Link>
             ))}
           </nav>
 
@@ -162,7 +195,7 @@ function WhisperingWoods() {
             </button>
 
             {/* Profile Avatar */}
-            <div className="relative group cursor-pointer">
+            <Link to="/profile" className="relative group cursor-pointer" title="View Profile">
               <div className="w-8 h-8 rounded-full border border-slate-500/40 overflow-hidden bg-slate-800 group-hover:border-gold-300 transition-colors">
                 <img
                   src="/user_avatar.jpg"
@@ -173,7 +206,7 @@ function WhisperingWoods() {
                   }}
                 />
               </div>
-            </div>
+            </Link>
           </div>
         </div>
       </header>
@@ -182,17 +215,36 @@ function WhisperingWoods() {
       <main className="flex-grow mx-auto w-full max-w-7xl px-6 py-8 flex flex-col justify-center">
 
         {/* Title and Subtitle Info */}
-        <div className="mb-8">
-          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-wide text-white">
-            The Whispering Woods
-          </h1>
-          <div className="mt-4 flex items-start">
-            {/* Yellow Accent Bar */}
-            <div className="w-1 self-stretch min-h-[40px] bg-[#d9b74f] rounded-full mr-4 shadow-[0_0_8px_rgba(217,183,79,0.5)]"></div>
-            <p className="text-sm text-slate-400 leading-relaxed max-w-2xl">
-              {narrationText}
-            </p>
+        <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-wide text-white">
+              The Whispering Woods
+            </h1>
+            <div className="mt-4 flex items-start">
+              {/* Yellow Accent Bar */}
+              <div className="w-1 self-stretch min-h-[40px] bg-[#d9b74f] rounded-full mr-4 shadow-[0_0_8px_rgba(217,183,79,0.5)]"></div>
+              <p className="text-sm text-slate-400 leading-relaxed max-w-2xl">
+                {narrationText}
+              </p>
+            </div>
           </div>
+
+          {/* Dedicated Redirect Button to Demon Guardian */}
+          <button
+            onClick={() => navigate('/demon-guardian')}
+            className="flex flex-col items-center justify-center px-6 py-3.5 bg-gradient-to-r from-[#d9b74f] via-amber-400 to-[#d9b74f] hover:from-amber-400 hover:to-amber-500 text-[#031220] font-black text-sm uppercase tracking-wider rounded-xl shadow-[0_0_20px_rgba(217,183,79,0.4)] transition-all transform hover:scale-105 active:scale-95 cursor-pointer self-start md:self-auto group"
+            title="Click or say 'demon' to redirect to Demon Guardian"
+          >
+            <div className="flex items-center gap-2">
+              <span>Proceed to Demon Guardian ⚔️</span>
+              <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </div>
+            <span className="text-[10px] text-[#031220]/80 font-bold font-mono mt-0.5">
+              🎙️ Say: "demon" or "proceed"
+            </span>
+          </button>
         </div>
 
         {/* Content Columns (Image + Sidebar) */}
@@ -342,99 +394,21 @@ function WhisperingWoods() {
         </div>
 
         {/* BOTTOM VOICE DECK PANEL */}
-        <div className="mt-10 flex flex-wrap items-center justify-between gap-6 bg-[#041628]/35 border border-[#0f3458]/30 p-5 rounded-2xl backdrop-blur-md shadow-inner">
-
-          {/* LEFT: VOICE STATUS BOX */}
-          <div className="flex items-center gap-4">
-
-            {/* Visual Equalizer Circle */}
-            <div
-              onClick={isListening ? stopListening : startListening}
-              className={`w-14 h-14 rounded-full flex items-center justify-center bg-[#031220] border-2 cursor-pointer transition-all duration-300 ${isListening
-                ? 'border-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.25)] hover:shadow-[0_0_20px_rgba(34,211,238,0.45)]'
-                : 'border-rose-500/50 shadow-[0_0_10px_rgba(239,68,68,0.15)] hover:shadow-[0_0_15px_rgba(239,68,68,0.3)]'
-                }`}
-              style={{
-                animation: isListening
-                  ? 'pulseGlow 2.5s infinite ease-in-out'
-                  : 'pulseGlowMuted 3s infinite ease-in-out'
-              }}
-              title={isListening ? 'Microphone Active' : 'Microphone Inactive'}
-            >
-              {/* Equalizer Bars */}
-              <div className="flex items-end justify-center gap-1.5 h-6 w-8">
-                {isListening ? (
-                  <>
-                    <span className={`w-1 rounded-full bg-cyan-400 ${wavePulse ? 'eq-bar-fast-1' : 'eq-bar-1'}`} />
-                    <span className={`w-1 rounded-full bg-cyan-400 ${wavePulse ? 'eq-bar-fast-2' : 'eq-bar-2'}`} />
-                    <span className={`w-1 rounded-full bg-cyan-400 ${wavePulse ? 'eq-bar-fast-3' : 'eq-bar-3'}`} />
-                    <span className={`w-1 rounded-full bg-cyan-400 ${wavePulse ? 'eq-bar-fast-4' : 'eq-bar-4'}`} strokeDasharray="3" />
-                  </>
-                ) : (
-                  <>
-                    <span className="w-1 h-[3px] rounded-full bg-rose-500/40" />
-                    <span className="w-1 h-[3px] rounded-full bg-rose-500/40" />
-                    <span className="w-1 h-[3px] rounded-full bg-rose-500/40" />
-                    <span className="w-1 h-[3px] rounded-full bg-rose-500/40" />
-                  </>
-                )}
-              </div>
-            </div>
-
-            {/* Status Information labels */}
-            <div className="flex flex-col min-w-[180px]">
-              <span className="text-slate-500 text-[9px] font-bold tracking-[0.2em] uppercase">
-                Voice Status
-              </span>
-              <span className={`text-sm font-bold tracking-wide transition-colors duration-300 mt-0.5 flex items-center gap-1.5 ${isListening ? 'text-cyan-400' : 'text-slate-500'
-                }`}>
-                {isListening ? (
-                  <>
-                    Listening...
-                    <span className="inline-flex gap-0.5">
-                      <span className="w-1 h-1 bg-cyan-400 rounded-full animate-[bounce_1s_infinite_100ms]" />
-                      <span className="w-1 h-1 bg-cyan-400 rounded-full animate-[bounce_1s_infinite_200ms]" />
-                      <span className="w-1 h-1 bg-cyan-400 rounded-full animate-[bounce_1s_infinite_300ms]" />
-                    </span>
-                  </>
-                ) : (
-                  'Offline'
-                )}
-              </span>
-
-              <div className="text-[11px] text-slate-400 mt-1.5 flex flex-wrap items-center gap-1">
-                <span>Command Recognized:</span>
-                <span className="text-[#d9b74f] font-bold">
-                  {recognizedCommand ? `"${recognizedCommand}"` : '"None"'}
-                </span>
-              </div>
-              {transcript && (
-                <p className="text-[10px] text-cyan-300 mt-0.5 italic">
-                  Heard: "{transcript}"
-                </p>
-              )}
-              {error && (
-                <p className="text-[10px] text-rose-400 mt-0.5">
-                  {error}
-                </p>
-              )}
-            </div>
-
-          </div>
+        <div className="mt-10 flex items-center justify-center gap-6 bg-[#041628]/35 border border-[#0f3458]/30 p-5 rounded-2xl backdrop-blur-md shadow-inner">
 
           {/* CENTER: PILL CONTROLS */}
           <div className="flex items-center bg-[#031220]/80 border border-[#0f3458]/70 px-4 py-2.5 rounded-full shadow-2xl">
 
             {/* Microphone Toggle (Yellow pill) */}
             <button
-              onClick={isListening ? stopListening : startListening}
-              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 transform active:scale-95 cursor-pointer ${isListening
+              onClick={toggleMicrophoneVoice}
+              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 transform active:scale-95 cursor-pointer ${!isMuted && isListening
                 ? 'bg-[#d9b74f] text-[#031220] shadow-[0_0_12px_rgba(217,183,79,0.3)] hover:brightness-105'
                 : 'bg-rose-600 text-white shadow-[0_0_12px_rgba(239,68,68,0.3)] hover:bg-rose-700'
                 }`}
-              title={isListening ? 'Mute Microphone' : 'Activate Microphone'}
+              title={!isMuted && isListening ? 'Turn Off Microphone & Voice' : 'Activate Microphone & Voice'}
             >
-              {isListening ? (
+              {!isMuted && isListening ? (
                 /* Microphone On Icon */
                 <svg className="w-5 h-5 font-bold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
@@ -443,7 +417,7 @@ function WhisperingWoods() {
                 /* Microphone Off/Slashed Icon */
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+                  <line x1="3" y1="3" x2="21" y2="21" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
                 </svg>
               )}
             </button>
@@ -496,9 +470,6 @@ function WhisperingWoods() {
             </div>
 
           </div>
-
-          {/* BALANCING FLEX SPACE */}
-          <div className="hidden lg:block w-[180px]"></div>
 
         </div>
 

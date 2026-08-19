@@ -1,8 +1,14 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import Logo from "./Logo";
 import { colors } from "../styles/colors";
 
-const footerLinks = ["Home", "About Us", "Leader Board", "Contact Us"];
+const footerLinks = [
+  { name: "Home", path: "/whispering-woods" },
+  { name: "About Us", path: "/aboutus" },
+  { name: "Leader Board", path: "/player-journey" },
+  { name: "Contact Us", path: "/contactus" },
+];
 
 function FooterLinkColumn({ title, links }) {
   return (
@@ -10,10 +16,10 @@ function FooterLinkColumn({ title, links }) {
       <p className="text-white font-bold text-sm mb-3">{title}</p>
       <ul className="space-y-2">
         {links.map((l) => (
-          <li key={l}>
-            <a href="#" className="text-xs underline" style={{ color: colors.textMuted }}>
-              {l}
-            </a>
+          <li key={l.name}>
+            <Link to={l.path} className="text-xs hover:text-[#d9b74f] transition-colors" style={{ color: colors.textMuted }}>
+              {l.name}
+            </Link>
           </li>
         ))}
       </ul>

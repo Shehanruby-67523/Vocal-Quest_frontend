@@ -280,11 +280,13 @@ export default function UserManagement() {
               )}
             </div>
 
-            {/* User Profile */}
-            <div className="w-8 h-8 rounded-full border border-gold-400 overflow-hidden bg-slate-700 cursor-pointer flex items-center justify-center">
-              <svg className="w-6 h-6 text-gold-300" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-              </svg>
+            {/* Admin Profile */}
+            <div 
+              onClick={() => navigate('/admin/profile')}
+              className="w-9 h-9 rounded-full border-2 border-gold-400 overflow-hidden bg-[#0A2E52] p-0.5 cursor-pointer hover:scale-105 transition flex items-center justify-center shadow-[0_0_10px_rgba(250,204,21,0.3)]"
+              title="Admin Profile"
+            >
+              <span className="text-xs font-black text-gold-400">SA</span>
             </div>
           </div>
         </div>
@@ -305,9 +307,9 @@ export default function UserManagement() {
               </div>
               <button 
                 onClick={() => setInviteModalOpen(true)}
-                className="bg-gold-400 hover:bg-gold-500 text-slate-950 font-bold px-4 py-2.5 rounded-lg flex items-center justify-center gap-2 transition duration-200 text-sm shadow-[0_0_15px_rgba(217,183,79,0.15)] self-start sm:self-center"
+                className="bg-gradient-to-r from-[#d9b74f] via-amber-400 to-[#d9b74f] hover:from-amber-400 hover:to-amber-500 text-[#031220] font-black px-5 py-2.5 rounded-xl flex items-center justify-center gap-2.5 transition duration-200 text-sm shadow-[0_0_15px_rgba(217,183,79,0.35)] self-start sm:self-center cursor-pointer transform active:scale-95 border border-[#d9b74f]/40"
               >
-                <UserPlus size={16} />
+                <UserPlus size={16} strokeWidth={2.5} />
                 <span>Invite User</span>
               </button>
             </div>
@@ -766,9 +768,9 @@ export default function UserManagement() {
                 </button>
                 <button 
                   type="submit" 
-                  className="px-4 py-2 bg-gold-400 hover:bg-gold-500 text-slate-950 font-bold rounded-lg text-sm transition"
+                  className="px-5 py-2 bg-gradient-to-r from-[#d9b74f] to-amber-400 hover:from-amber-400 hover:to-amber-500 text-[#031220] font-black rounded-xl text-sm transition shadow-[0_0_15px_rgba(217,183,79,0.35)] border border-[#d9b74f]/40 cursor-pointer"
                 >
-                  Create Account
+                  Send Invitation
                 </button>
               </div>
             </form>

@@ -14,10 +14,14 @@ const ForgotPassword = () => {
     <div className="forgot-page-container">
       <header className="page-header">
         <div className="logo-container">
-          <span className="mic-icon" style={{fontSize: '2.5rem', color: '#fecb00'}}>🎤</span>
-          <div className="logo-text">
-            <span>Vocal</span><span>Quest</span>
-          </div>
+          <img
+            src="/pvmT4-removebg-preview.png"
+            alt="Vocal Quest Logo"
+            className="h-12 w-auto max-w-[200px] object-contain drop-shadow-[0_0_10px_rgba(217,183,79,0.3)]"
+            onError={(e) => {
+              e.target.style.display = 'none';
+            }}
+          />
         </div>
       </header>
 
@@ -54,11 +58,15 @@ const ForgotPassword = () => {
       <footer className="main-footer">
         <div className="footer-content">
           <div className="footer-brand">
-            <div className="logo-container small">
-               <span className="mic-icon" style={{fontSize: '1.5rem', color: '#fecb00'}}>🎤</span>
-               <div className="logo-text small">
-                <span>Vocal</span><span>Quest</span>
-              </div>
+            <div className="logo-container small mb-3">
+              <img
+                src="/pvmT4-removebg-preview.png"
+                alt="Vocal Quest Logo"
+                className="w-[180px] sm:w-[220px] max-h-[110px] h-auto object-contain drop-shadow-[0_0_10px_rgba(217,183,79,0.3)]"
+                onError={(e) => {
+                  e.target.src = "/src/assets/logo_brand.png";
+                }}
+              />
             </div>
             <p className="footer-description">
               “Enhance your speaking and learning through interactive quizzes.”

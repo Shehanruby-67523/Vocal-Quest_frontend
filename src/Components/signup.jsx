@@ -12,13 +12,46 @@ const Signup = () => {
     event.preventDefault();
     // Logic for handling the sign-up process (e.g., API call)
     console.log('Signing up with:', { name, email, password });
-    // Redirect to the demon guardian quiz page on successful signup
-    navigate('/demon-guardian');
+    // Redirect to whispering woods level on successful signup
+    navigate('/whispering-woods');
   };
 
   const handleSocialLogin = (platform) => {
-    console.log(`Logging in via ${platform}`);
-    // Implement social login logic
+    const redirectUri = window.location.origin + '/whispering-woods';
+    
+    // Save user session details for social sign-in
+    const userSession = {
+      username: `${platform} User`,
+      provider: platform,
+      isLoggedIn: true,
+      loginTime: new Date().toISOString()
+    };
+    localStorage.setItem('vocal_quest_user', JSON.stringify(userSession));
+
+    if (platform === 'Google') {
+      const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=1039828192-sample.apps.googleusercontent.com&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=${encodeURIComponent('openid profile email')}`;
+      try {
+        window.location.href = googleAuthUrl;
+      } catch (e) {
+        navigate('/whispering-woods');
+      }
+    } else if (platform === 'Facebook') {
+      const fbAuthUrl = `https://www.facebook.com/v12.0/dialog/oauth?client_id=1234567890&redirect_uri=${encodeURIComponent(redirectUri)}&scope=email,public_profile`;
+      try {
+        window.location.href = fbAuthUrl;
+      } catch (e) {
+        navigate('/whispering-woods');
+      }
+    } else if (platform === 'LinkedIn') {
+      const linkedinAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=1234567890&redirect_uri=${encodeURIComponent(redirectUri)}&scope=r_liteprofile%20r_emailaddress`;
+      try {
+        window.location.href = linkedinAuthUrl;
+      } catch (e) {
+        navigate('/whispering-woods');
+      }
+    } else {
+      navigate('/whispering-woods');
+    }
   };
 
   return (
@@ -26,15 +59,14 @@ const Signup = () => {
       {/* Top Header Section with Logo */}
       <header className="page-header">
         <div className="logo-container">
-          {/* Logo representation - Replace with actual image in production */}
-          <div className="logo-icon-wrapper">
-            <span className="mic-icon">🎤</span>
-            <div className="mic-circle"></div>
-            <div className="arrow-line"></div>
-          </div>
-          <div className="logo-text">
-            <span>Vocal</span><span>Quest</span>
-          </div>
+          <img
+            src="/pvmT4-removebg-preview.png"
+            alt="Vocal Quest Logo"
+            className="h-12 w-auto max-w-[200px] object-contain drop-shadow-[0_0_10px_rgba(217,183,79,0.3)]"
+            onError={(e) => {
+              e.target.style.display = 'none';
+            }}
+          />
         </div>
       </header>
 
@@ -107,15 +139,15 @@ const Signup = () => {
       <footer className="main-footer">
         <div className="footer-content">
           <div className="footer-brand">
-            <div className="logo-container small">
-              <div className="logo-icon-wrapper small">
-                <span className="mic-icon small">🎤</span>
-                <div className="mic-circle small"></div>
-                <div className="arrow-line small"></div>
-              </div>
-              <div className="logo-text small">
-                <span>Vocal</span><span>Quest</span>
-              </div>
+            <div className="logo-container small mb-3">
+              <img
+                src="/pvmT4-removebg-preview.png"
+                alt="Vocal Quest Logo"
+                className="w-[180px] sm:w-[220px] max-h-[110px] h-auto object-contain drop-shadow-[0_0_10px_rgba(217,183,79,0.3)]"
+                onError={(e) => {
+                  e.target.src = "/src/assets/logo_brand.png";
+                }}
+              />
             </div>
             <p className="footer-description">
               “Enhance your speaking and learning through interactive quizzes.”

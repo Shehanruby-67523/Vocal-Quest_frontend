@@ -101,14 +101,13 @@ export default function CommandCenter() {
               <Settings size={16} />
             </button>
 
-            <div className="w-9 h-9 rounded-full border border-gold-400/60 overflow-hidden bg-slate-800 p-0.5 cursor-pointer hover:border-gold-400 transition">
-              <div className="w-full h-full rounded-full overflow-hidden bg-slate-700">
-                <img 
-                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" 
-                  alt="Admin Profile" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
+            {/* Admin Profile Icon */}
+            <div 
+              onClick={() => navigate('/admin/profile')}
+              className="w-9 h-9 rounded-full border-2 border-gold-400 overflow-hidden bg-[#0A2E52] p-0.5 cursor-pointer hover:scale-105 transition flex items-center justify-center shadow-[0_0_10px_rgba(250,204,21,0.3)]"
+              title="Admin Profile"
+            >
+              <span className="text-xs font-black text-gold-400">SA</span>
             </div>
           </div>
         </header>

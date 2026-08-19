@@ -6,7 +6,8 @@ import {
   Workflow, 
   Database, 
   LineChart, 
-  Rocket 
+  Rocket,
+  User 
 } from 'lucide-react';
 
 export default function AdminSidebar() {
@@ -38,6 +39,11 @@ export default function AdminSidebar() {
       name: 'Game Analytics',
       path: '/admin/game-analytics',
       icon: <LineChart size={18} />
+    },
+    {
+      name: 'Admin Profile',
+      path: '/admin/profile',
+      icon: <User size={18} />
     }
   ];
 
@@ -45,20 +51,22 @@ export default function AdminSidebar() {
     <aside className="w-64 bg-[#0a0f1d] border-r border-slate-800/60 flex flex-col justify-between h-screen sticky top-0 py-6 select-none shrink-0 z-20">
       <div>
         {/* Brand Logo Header */}
-        <div className="px-6 mb-8 flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gold-400 text-slate-950 font-black shadow-[0_0_15px_rgba(217,183,79,0.3)]">
-            <svg className="w-5.5 h-5.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-            </svg>
-          </div>
-          <div>
-            <h1 className="text-sm font-bold tracking-tight text-white uppercase leading-none">
-              Vocal Quest
-            </h1>
-            <span className="text-[10px] font-bold text-gold-400 tracking-wider uppercase block mt-1">
-              ADMIN PANEL
-            </span>
-          </div>
+        <div 
+          onClick={() => navigate('/admin/command-center')} 
+          className="px-6 mb-8 flex flex-col items-start cursor-pointer group"
+          title="Admin Command Center"
+        >
+          <img
+            src="/pvmT4-removebg-preview.png"
+            alt="Vocal Quest Logo"
+            className="w-full max-w-[180px] max-h-[90px] h-auto object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-[0_0_12px_rgba(217,183,79,0.35)]"
+            onError={(e) => {
+              e.target.src = "/src/assets/logo_brand.png";
+            }}
+          />
+          <span className="text-[10px] font-extrabold text-gold-400 tracking-widest uppercase block mt-1.5 px-2 py-0.5 bg-gold-400/10 border border-gold-400/20 rounded-md">
+            ADMIN PANEL
+          </span>
         </div>
 
         {/* Sidebar Links */}
@@ -90,13 +98,28 @@ export default function AdminSidebar() {
         </nav>
       </div>
 
-      {/* Launch Game Button */}
-      <div className="px-4">
-        <button
-          onClick={() => window.open('/demon-guardian', '_blank')}
-          className="w-full bg-gold-400 hover:bg-gold-500 text-slate-950 font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition duration-200 text-xs shadow-[0_4px_15px_rgba(217,183,79,0.15)]"
+      {/* Admin User Profile Card & Launch Game Button */}
+      <div className="px-4 space-y-3">
+        {/* Admin Profile Clickable Badge */}
+        <div 
+          onClick={() => navigate('/admin/profile')}
+          className="p-2.5 bg-[#18233c] hover:bg-[#1f2e4e] border border-[#d9b74f]/30 rounded-xl flex items-center gap-3 cursor-pointer transition group"
+          title="Click to view Admin Profile"
         >
-          <Rocket size={14} />
+          <div className="w-8 h-8 rounded-full bg-[#0A2E52] border border-[#d9b74f] flex items-center justify-center text-xs font-black text-[#d9b74f] shrink-0 group-hover:scale-105 transition">
+            SA
+          </div>
+          <div className="flex flex-col min-w-0">
+            <span className="text-xs font-bold text-white truncate">Sajani (Admin)</span>
+            <span className="text-[10px] text-[#d9b74f] font-mono font-semibold">SUPER ADMIN</span>
+          </div>
+        </div>
+
+        <button
+          onClick={() => navigate('/whispering-woods')}
+          className="w-full bg-gradient-to-r from-[#d9b74f] via-amber-400 to-[#d9b74f] hover:from-amber-400 hover:to-amber-500 text-[#031220] font-black py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition duration-200 text-xs shadow-[0_0_15px_rgba(217,183,79,0.35)] border border-[#d9b74f]/40 cursor-pointer transform active:scale-95"
+        >
+          <Rocket size={16} strokeWidth={2.5} />
           <span>Launch Game</span>
         </button>
       </div>

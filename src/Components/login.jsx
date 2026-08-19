@@ -37,12 +37,56 @@ const Login = () => {
     }
   };
 
+  const handleSocialLogin = (platform) => {
+    const redirectUri = window.location.origin + '/whispering-woods';
+    
+    // Save user session details for social sign-in
+    const userSession = {
+      username: `${platform} User`,
+      provider: platform,
+      isLoggedIn: true,
+      loginTime: new Date().toISOString()
+    };
+    localStorage.setItem('vocal_quest_user', JSON.stringify(userSession));
+
+    if (platform === 'Google') {
+      const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=1039828192-sample.apps.googleusercontent.com&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=${encodeURIComponent('openid profile email')}`;
+      try {
+        window.location.href = googleAuthUrl;
+      } catch (e) {
+        navigate('/whispering-woods');
+      }
+    } else if (platform === 'Facebook') {
+      const fbAuthUrl = `https://www.facebook.com/v12.0/dialog/oauth?client_id=1234567890&redirect_uri=${encodeURIComponent(redirectUri)}&scope=email,public_profile`;
+      try {
+        window.location.href = fbAuthUrl;
+      } catch (e) {
+        navigate('/whispering-woods');
+      }
+    } else if (platform === 'LinkedIn') {
+      const linkedinAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=1234567890&redirect_uri=${encodeURIComponent(redirectUri)}&scope=r_liteprofile%20r_emailaddress`;
+      try {
+        window.location.href = linkedinAuthUrl;
+      } catch (e) {
+        navigate('/whispering-woods');
+      }
+    } else {
+      navigate('/whispering-woods');
+    }
+  };
+
   return (
     <div className="login-page">
       <header className="header-logo">
-        <div className="logo-container">
-          <span className="mic-icon">🎤</span>
-          <h1>Vocal <span>Quest</span></h1>
+        <div className="logo-container flex justify-center items-center">
+          <img
+            src="/pvmT4-removebg-preview.png"
+            alt="Vocal Quest Logo"
+            className="w-[280px] sm:w-[380px] md:w-[436px] max-h-[229px] h-auto object-contain transition-transform duration-300 hover:scale-105 drop-shadow-[0_0_15px_rgba(217,183,79,0.4)]"
+            onError={(e) => {
+              e.target.src = "/src/assets/logo_brand.png";
+            }}
+          />
         </div>
       </header>
 
@@ -123,9 +167,9 @@ const Login = () => {
               <span>Or Via Social Media</span>
             </div>
             <div className="social-icons">
-              <button className="social-icon google">G</button>
-              <button className="social-icon facebook">f</button>
-              <button className="social-icon linkedin">in</button>
+              <button type="button" onClick={() => handleSocialLogin('Google')} className="social-icon google" title="Login via Google">G</button>
+              <button type="button" onClick={() => handleSocialLogin('Facebook')} className="social-icon facebook" title="Login via Facebook">f</button>
+              <button type="button" onClick={() => handleSocialLogin('LinkedIn')} className="social-icon linkedin" title="Login via LinkedIn">in</button>
             </div>
           </div>
         </div>
@@ -134,9 +178,15 @@ const Login = () => {
       <footer className="main-footer">
         <div className="footer-content">
           <div className="footer-brand">
-            <div className="logo-container small">
-              <span className="mic-icon">🎤</span>
-              <h3>Vocal <span>Quest</span></h3>
+            <div className="logo-container small mb-3">
+              <img
+                src="/pvmT4-removebg-preview.png"
+                alt="Vocal Quest Logo"
+                className="w-[180px] sm:w-[220px] max-h-[110px] h-auto object-contain drop-shadow-[0_0_10px_rgba(217,183,79,0.3)]"
+                onError={(e) => {
+                  e.target.src = "/src/assets/logo_brand.png";
+                }}
+              />
             </div>
             <p>“Enhance your speaking and learning through interactive quizzes.”</p>
           </div>
