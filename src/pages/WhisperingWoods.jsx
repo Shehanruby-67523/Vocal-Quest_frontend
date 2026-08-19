@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useVoiceCommands } from '../hooks/useVoiceCommands'
+import { useSpeechSynthesis } from '../hooks/useSpeechSynthesis'
+import { useMemo } from 'react'
 
 function WhisperingWoods() {
-  const [isListening, setIsListening] = useState(true)
+  const navigate = useNavigate()
   const [isMuted, setIsMuted] = useState(false)
   const [recognizedCommand, setRecognizedCommand] = useState('Choice One')
   const [narrationText, setNarrationText] = useState(
@@ -11,10 +14,8 @@ function WhisperingWoods() {
   const [activeTab, setActiveTab] = useState('RESULTS') // Matches the mockup's yellow active tab
   const [activeBuffs, setActiveBuffs] = useState({ buff1: true, buff2: true })
 
-  // Set page title on mount
-  useEffect(() => {
-    document.title = 'The Whispering Woods - Vocal Quest'
-  }, [])
+  // Text-to-Speech hook
+  const { speak, stop } = useSpeechSynthesis()
 
   // Trigger brief soundwave pulse when command changes
   const [wavePulse, setWavePulse] = useState(false)
@@ -27,9 +28,13 @@ function WhisperingWoods() {
   }, [recognizedCommand])
 
   const handleAction = (actionText, commandCode) => {
-    if (!isListening) return
     setRecognizedCommand(commandCode)
-    
+
+    if (commandCode === 'Demon Guardian') {
+      navigate('/demon-guardian')
+      return
+    }
+
     // Update narration based on command
     if (commandCode === 'Inspect the shrine') {
       setNarrationText('You step toward the ancient stone shrine. A soft cyan light grows warmer, whispering forgotten runes.')
@@ -39,6 +44,36 @@ function WhisperingWoods() {
       setNarrationText('You venture down the mossy path. The shadows recede slightly, guiding you deeper into the Deepwood Sanctuary.')
     }
   }
+
+  // 1. Define command map for voice recognition with Synonym & Fuzzy support
+  const commandMap = useMemo(
+    () => ({
+      'inspect, shrine, look, check, examine': () => handleAction('Inspect shrine', 'Inspect the shrine'),
+      'cast, light, spell, illuminate, shine': () => handleAction('Cast light', 'Cast light spell'),
+      'follow, trail, path, walk, go': () => handleAction('Follow trail', 'Follow the trail'),
+      'demon, guardian, next, continue, proceed': () => handleAction('Demon Guardian', 'Demon Guardian'),
+    }),
+    [navigate]
+  )
+
+  // 2. Connect voice commands hook
+  const {
+    isListening,
+    transcript,
+    error,
+    startListening,
+    stopListening,
+  } = useVoiceCommands(commandMap)
+
+  // 3. Announce narration/question when text updates & start listening after voice finishes
+  useEffect(() => {
+    if (narrationText && !isMuted) {
+      speak(narrationText, () => {
+        // Automatically start listening for spoken commands when speech completes
+        startListening()
+      })
+    }
+  }, [narrationText, isMuted, speak, startListening])
 
   return (
     <div className="min-h-screen bg-[#001F3F] text-slate-100 font-sans flex flex-col justify-between selection:bg-gold-500/30 selection:text-gold-300">
@@ -88,7 +123,7 @@ function WhisperingWoods() {
       {/* HEADER */}
       <header className="border-b border-[#0f2d4a]/50 bg-[#0B263F]/80 backdrop-blur-md sticky top-0 z-50">
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-4">
-          
+
           {/* Logo */}
           <Link to="/demon-guardian" className="flex items-center gap-2.5 group">
             <div className="flex h-7 w-7 items-center justify-center rounded bg-[#d9b74f] text-[#031220] font-black text-sm tracking-tighter shadow-[0_0_10px_rgba(217,183,79,0.2)] transition-transform group-hover:scale-105">
@@ -105,11 +140,10 @@ function WhisperingWoods() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`text-[11px] font-bold tracking-[0.2em] transition-all duration-200 cursor-pointer ${
-                  activeTab === tab 
-                    ? 'text-[#d9b74f] drop-shadow-[0_0_8px_rgba(217,183,79,0.3)]' 
-                    : 'text-slate-400 hover:text-slate-100'
-                }`}
+                className={`text-[11px] font-bold tracking-[0.2em] transition-all duration-200 cursor-pointer ${activeTab === tab
+                  ? 'text-[#d9b74f] drop-shadow-[0_0_8px_rgba(217,183,79,0.3)]'
+                  : 'text-slate-400 hover:text-slate-100'
+                  }`}
               >
                 {tab}
               </button>
@@ -130,9 +164,9 @@ function WhisperingWoods() {
             {/* Profile Avatar */}
             <div className="relative group cursor-pointer">
               <div className="w-8 h-8 rounded-full border border-slate-500/40 overflow-hidden bg-slate-800 group-hover:border-gold-300 transition-colors">
-                <img 
-                  src="/user_avatar.jpg" 
-                  alt="User Avatar" 
+                <img
+                  src="/user_avatar.jpg"
+                  alt="User Avatar"
                   className="w-full h-full object-cover"
                   onError={(e) => {
                     e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80";
@@ -146,7 +180,7 @@ function WhisperingWoods() {
 
       {/* MAIN CONTAINER */}
       <main className="flex-grow mx-auto w-full max-w-7xl px-6 py-8 flex flex-col justify-center">
-        
+
         {/* Title and Subtitle Info */}
         <div className="mb-8">
           <h1 className="text-4xl sm:text-5xl font-extrabold tracking-wide text-white">
@@ -163,14 +197,14 @@ function WhisperingWoods() {
 
         {/* Content Columns (Image + Sidebar) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          
+
           {/* LEFT: Central Banner Image */}
           <div className="lg:col-span-9 relative rounded-2xl overflow-hidden border border-[#0f3458]/40 bg-[#041628]/45 shadow-[0_8px_32px_rgba(0,0,0,0.4)] aspect-[16/9] group">
-            
+
             {/* Whispering Woods Background Image */}
-            <img 
-              src="/whispering_woods_bg.jpg" 
-              alt="Whispering Woods Scene" 
+            <img
+              src="/whispering_woods_bg.jpg"
+              alt="Whispering Woods Scene"
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
               onError={(e) => {
                 e.target.src = "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=1200&q=80";
@@ -187,23 +221,24 @@ function WhisperingWoods() {
               </h2>
               <ul className="space-y-2.5">
                 {[
-                  { text: 'Inspect the shrine', code: 'Inspect the shrine' },
-                  { text: 'Cast light spell', code: 'Cast light spell' },
-                  { text: 'Follow the trail', code: 'Follow the trail' }
+                  { text: 'Inspect the shrine', code: 'Inspect the shrine', voiceHint: 'inspect / shrine' },
+                  { text: 'Cast light spell', code: 'Cast light spell', voiceHint: 'light / cast' },
+                  { text: 'Follow the trail', code: 'Follow the trail', voiceHint: 'trail / follow' },
+                  { text: "Challenge Demon's Gate", code: 'Demon Guardian', voiceHint: 'demon / next' }
                 ].map((action, index) => (
                   <li key={index}>
                     <button
                       onClick={() => handleAction(action.text, action.code)}
-                      disabled={!isListening}
-                      className={`w-full text-left flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs transition-all ${
-                        isListening
-                          ? 'text-slate-200 hover:text-white hover:bg-slate-800/35 cursor-pointer'
-                          : 'text-slate-500 cursor-not-allowed opacity-50'
-                      }`}
+                      className="w-full text-left flex flex-col gap-0.5 px-2.5 py-1.5 rounded-lg text-xs transition-all text-slate-200 hover:text-white hover:bg-slate-800/35 cursor-pointer"
                     >
-                      {/* Cyan Bullet Point */}
-                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#22d3ee] flex-shrink-0" />
-                      <span className="font-medium">"{action.text}"</span>
+                      <div className="flex items-center gap-2">
+                        {/* Cyan Bullet Point */}
+                        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#22d3ee] flex-shrink-0" />
+                        <span className="font-medium">"{action.text}"</span>
+                      </div>
+                      <span className="text-[10px] text-cyan-300/80 ml-3.5 italic font-mono">
+                        🎙️ Say: "{action.voiceHint}"
+                      </span>
                     </button>
                   </li>
                 ))}
@@ -213,7 +248,7 @@ function WhisperingWoods() {
 
           {/* RIGHT: Sidebar Panels */}
           <div className="lg:col-span-3 flex flex-col gap-5 w-full">
-            
+
             {/* MAP PRESENCE CARD */}
             <div className="p-4 rounded-2xl bg-[#041628]/50 backdrop-blur-sm border border-[#0f3458]/40 shadow-lg flex flex-col">
               <div className="flex items-center justify-between border-b border-[#0f3458]/35 pb-2.5 mb-3">
@@ -229,16 +264,16 @@ function WhisperingWoods() {
 
               {/* Map Image container */}
               <div className="h-44 w-full rounded-xl overflow-hidden border border-[#0f3458]/30 bg-slate-900 relative group cursor-crosshair">
-                <img 
-                  src="/map_presence.jpg" 
-                  alt="Deepwood Sanctuary Map" 
+                <img
+                  src="/map_presence.jpg"
+                  alt="Deepwood Sanctuary Map"
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   onError={(e) => {
                     e.target.src = "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?auto=format&fit=crop&w=300&q=80";
                   }}
                 />
                 <div className="absolute inset-0 bg-[#031220]/20 pointer-events-none" />
-                
+
                 {/* Simulated radar sweep animation */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-500/10 to-transparent -translate-x-full animate-[shimmer_2.5s_infinite] pointer-events-none" />
               </div>
@@ -271,11 +306,10 @@ function WhisperingWoods() {
                 {/* Buff 1 (Magic Wand) */}
                 <button
                   onClick={() => setActiveBuffs(b => ({ ...b, buff1: !b.buff1 }))}
-                  className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
-                    activeBuffs.buff1 
-                      ? 'bg-[#d9b74f]/10 border border-[#d9b74f] text-[#d9b74f] shadow-[0_0_10px_rgba(217,183,79,0.15)]' 
-                      : 'bg-slate-900/60 border border-[#0f3458]/30 text-slate-500 hover:border-[#d9b74f]/40'
-                  }`}
+                  className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all cursor-pointer ${activeBuffs.buff1
+                    ? 'bg-[#d9b74f]/10 border border-[#d9b74f] text-[#d9b74f] shadow-[0_0_10px_rgba(217,183,79,0.15)]'
+                    : 'bg-slate-900/60 border border-[#0f3458]/30 text-slate-500 hover:border-[#d9b74f]/40'
+                    }`}
                   title="Arcane Insight - Active"
                 >
                   <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
@@ -288,11 +322,10 @@ function WhisperingWoods() {
                 {/* Buff 2 (Clairvoyance Mind) */}
                 <button
                   onClick={() => setActiveBuffs(b => ({ ...b, buff2: !b.buff2 }))}
-                  className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
-                    activeBuffs.buff2 
-                      ? 'bg-cyan-500/10 border border-cyan-500/80 text-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.15)]' 
-                      : 'bg-slate-900/60 border border-[#0f3458]/30 text-slate-500 hover:border-cyan-500/40'
-                  }`}
+                  className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all cursor-pointer ${activeBuffs.buff2
+                    ? 'bg-cyan-500/10 border border-cyan-500/80 text-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.15)]'
+                    : 'bg-slate-900/60 border border-[#0f3458]/30 text-slate-500 hover:border-cyan-500/40'
+                    }`}
                   title="Spiritual Connection - Active"
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
@@ -310,21 +343,20 @@ function WhisperingWoods() {
 
         {/* BOTTOM VOICE DECK PANEL */}
         <div className="mt-10 flex flex-wrap items-center justify-between gap-6 bg-[#041628]/35 border border-[#0f3458]/30 p-5 rounded-2xl backdrop-blur-md shadow-inner">
-          
+
           {/* LEFT: VOICE STATUS BOX */}
           <div className="flex items-center gap-4">
-            
+
             {/* Visual Equalizer Circle */}
-            <div 
-              onClick={() => setIsListening(!isListening)}
-              className={`w-14 h-14 rounded-full flex items-center justify-center bg-[#031220] border-2 cursor-pointer transition-all duration-300 ${
-                isListening 
-                  ? 'border-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.25)] hover:shadow-[0_0_20px_rgba(34,211,238,0.45)]' 
-                  : 'border-rose-500/50 shadow-[0_0_10px_rgba(239,68,68,0.15)] hover:shadow-[0_0_15px_rgba(239,68,68,0.3)]'
-              }`}
+            <div
+              onClick={isListening ? stopListening : startListening}
+              className={`w-14 h-14 rounded-full flex items-center justify-center bg-[#031220] border-2 cursor-pointer transition-all duration-300 ${isListening
+                ? 'border-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.25)] hover:shadow-[0_0_20px_rgba(34,211,238,0.45)]'
+                : 'border-rose-500/50 shadow-[0_0_10px_rgba(239,68,68,0.15)] hover:shadow-[0_0_15px_rgba(239,68,68,0.3)]'
+                }`}
               style={{
-                animation: isListening 
-                  ? 'pulseGlow 2.5s infinite ease-in-out' 
+                animation: isListening
+                  ? 'pulseGlow 2.5s infinite ease-in-out'
                   : 'pulseGlowMuted 3s infinite ease-in-out'
               }}
               title={isListening ? 'Microphone Active' : 'Microphone Inactive'}
@@ -336,7 +368,7 @@ function WhisperingWoods() {
                     <span className={`w-1 rounded-full bg-cyan-400 ${wavePulse ? 'eq-bar-fast-1' : 'eq-bar-1'}`} />
                     <span className={`w-1 rounded-full bg-cyan-400 ${wavePulse ? 'eq-bar-fast-2' : 'eq-bar-2'}`} />
                     <span className={`w-1 rounded-full bg-cyan-400 ${wavePulse ? 'eq-bar-fast-3' : 'eq-bar-3'}`} />
-                    <span className={`w-1 rounded-full bg-cyan-400 ${wavePulse ? 'eq-bar-fast-4' : 'eq-bar-4'}`} strokeDasharray="3"/>
+                    <span className={`w-1 rounded-full bg-cyan-400 ${wavePulse ? 'eq-bar-fast-4' : 'eq-bar-4'}`} strokeDasharray="3" />
                   </>
                 ) : (
                   <>
@@ -354,9 +386,8 @@ function WhisperingWoods() {
               <span className="text-slate-500 text-[9px] font-bold tracking-[0.2em] uppercase">
                 Voice Status
               </span>
-              <span className={`text-sm font-bold tracking-wide transition-colors duration-300 mt-0.5 flex items-center gap-1.5 ${
-                isListening ? 'text-cyan-400' : 'text-slate-500'
-              }`}>
+              <span className={`text-sm font-bold tracking-wide transition-colors duration-300 mt-0.5 flex items-center gap-1.5 ${isListening ? 'text-cyan-400' : 'text-slate-500'
+                }`}>
                 {isListening ? (
                   <>
                     Listening...
@@ -370,28 +401,37 @@ function WhisperingWoods() {
                   'Offline'
                 )}
               </span>
-              
+
               <div className="text-[11px] text-slate-400 mt-1.5 flex flex-wrap items-center gap-1">
-                <span>"Command Recognized:</span>
+                <span>Command Recognized:</span>
                 <span className="text-[#d9b74f] font-bold">
-                  {recognizedCommand ? `${recognizedCommand}"` : 'None"'}
+                  {recognizedCommand ? `"${recognizedCommand}"` : '"None"'}
                 </span>
               </div>
+              {transcript && (
+                <p className="text-[10px] text-cyan-300 mt-0.5 italic">
+                  Heard: "{transcript}"
+                </p>
+              )}
+              {error && (
+                <p className="text-[10px] text-rose-400 mt-0.5">
+                  {error}
+                </p>
+              )}
             </div>
 
           </div>
 
           {/* CENTER: PILL CONTROLS */}
           <div className="flex items-center bg-[#031220]/80 border border-[#0f3458]/70 px-4 py-2.5 rounded-full shadow-2xl">
-            
+
             {/* Microphone Toggle (Yellow pill) */}
             <button
-              onClick={() => setIsListening(!isListening)}
-              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 transform active:scale-95 cursor-pointer ${
-                isListening
-                  ? 'bg-[#d9b74f] text-[#031220] shadow-[0_0_12px_rgba(217,183,79,0.3)] hover:brightness-105'
-                  : 'bg-rose-600 text-white shadow-[0_0_12px_rgba(239,68,68,0.3)] hover:bg-rose-700'
-              }`}
+              onClick={isListening ? stopListening : startListening}
+              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 transform active:scale-95 cursor-pointer ${isListening
+                ? 'bg-[#d9b74f] text-[#031220] shadow-[0_0_12px_rgba(217,183,79,0.3)] hover:brightness-105'
+                : 'bg-rose-600 text-white shadow-[0_0_12px_rgba(239,68,68,0.3)] hover:bg-rose-700'
+                }`}
               title={isListening ? 'Mute Microphone' : 'Activate Microphone'}
             >
               {isListening ? (
@@ -413,9 +453,9 @@ function WhisperingWoods() {
 
             {/* Pill secondary utilities */}
             <div className="flex items-center gap-2">
-              
+
               {/* Settings / Panel Layout icon */}
-              <button 
+              <button
                 className="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800/35 transition-colors cursor-pointer"
                 title="Toggle Dashboard view"
               >
@@ -425,7 +465,7 @@ function WhisperingWoods() {
               </button>
 
               {/* Help button */}
-              <button 
+              <button
                 className="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800/35 transition-colors cursor-pointer"
                 title="Open voice command guide"
               >
@@ -435,11 +475,10 @@ function WhisperingWoods() {
               </button>
 
               {/* Mute/Unmute Speaker button */}
-              <button 
+              <button
                 onClick={() => setIsMuted(!isMuted)}
-                className={`p-2 rounded-lg hover:bg-slate-800/35 transition-all cursor-pointer ${
-                  isMuted ? 'text-rose-500' : 'text-slate-400 hover:text-white'
-                }`}
+                className={`p-2 rounded-lg hover:bg-slate-800/35 transition-all cursor-pointer ${isMuted ? 'text-rose-500' : 'text-slate-400 hover:text-white'
+                  }`}
                 title={isMuted ? 'Unmute Audio' : 'Mute Audio'}
               >
                 {isMuted ? (

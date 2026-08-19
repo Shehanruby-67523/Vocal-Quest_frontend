@@ -23,13 +23,21 @@ export function useVoiceCommands(commandMap = {}) {
 
         recognition.onresult = (event) => {
             const current = event.resultIndex;
-            const spokenText = event.results[current][0].transcript.trim().toLowerCase();
-            setTranscript(spokenText);
+            const rawText = event.results[current][0].transcript;
+            
+            // 1. Text Normalization: Lowercase & remove punctuation
+            const cleanText = rawText.toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "").trim();
+            setTranscript(cleanText);
 
-            // Match spoken text against command dictionary
+            // 2. Fuzzy & Synonym Matching
             Object.keys(commandMap).forEach((commandKey) => {
-                // Check if spoken phrase includes the command key
-                if (spokenText.includes(commandKey.toLowerCase())) {
+                // Split comma/pipe separated synonyms e.g. "attack, strike, fight"
+                const triggers = commandKey.toLowerCase().split(/[,|]/).map((t) => t.trim());
+
+                // Check if spoken phrase includes any trigger keyword
+                const matched = triggers.some((trigger) => trigger.length > 0 && cleanText.includes(trigger));
+
+                if (matched) {
                     commandMap[commandKey](); // Execute associated handler
                 }
             });

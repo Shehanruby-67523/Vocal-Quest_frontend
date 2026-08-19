@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Lightbulb, Flag, Check, X, Trophy, ArrowRight, RotateCcw } from 'lucide-react'
 import Logo from '../Components/Logo'
+import { useSpeechSynthesis } from '../hooks/useSpeechSynthesis'
+
 // Game Questions conforming to the Gatekeeper's Challenge Quiz
 const QUESTIONS = [
   {
@@ -82,10 +84,20 @@ function DemonGuardian() {
     stateRef.current = { encounterState, currentIdx, isAnswered, hintsLeft, selectedKey, score, showForfeitModal }
   }, [encounterState, currentIdx, isAnswered, hintsLeft, selectedKey, score, showForfeitModal])
 
+  const { speak, stop } = useSpeechSynthesis()
+
   // Set document title
   useEffect(() => {
     document.title = "Demon's Challenge Quiz - Vocal Quest"
   }, [])
+
+  // Automatically announce quiz question when displayed or when question changes
+  useEffect(() => {
+    if (encounterState === 'QUIZ' && currentQuestion && !isMuted) {
+      const textToSpeak = `${currentQuestion.question}. Option A: ${currentQuestion.options[0].text}. Option B: ${currentQuestion.options[1].text}. Option C: ${currentQuestion.options[2].text}. Option D: ${currentQuestion.options[3].text}.`
+      speak(textToSpeak)
+    }
+  }, [currentIdx, encounterState, isMuted, speak])
 
   // Handle option selection
   const selectOption = (option) => {

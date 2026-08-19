@@ -33,7 +33,7 @@ const Login = () => {
     if (role === 'admin') {
       navigate('/admin'); // Redirect to Admin Panel/Command Center
     } else {
-      navigate('/demon-guardian'); // Redirect to Demon Guardian landing page
+      navigate('/whispering-woods'); // Redirect to Whispering Woods level
     }
   };
 
