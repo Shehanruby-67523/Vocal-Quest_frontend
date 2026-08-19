@@ -3,46 +3,26 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Lightbulb, Flag, Check, X, Trophy, ArrowRight, RotateCcw } from 'lucide-react'
 import Logo from '../Components/Logo'
 import { useSpeechSynthesis } from '../hooks/useSpeechSynthesis'
+import rawQuizQuestions from '../data/quizQuestions.json'
 
-// Game Questions conforming to the Gatekeeper's Challenge Quiz
-const QUESTIONS = [
-  {
-    question: "What is the true name of the silent flame?",
-    stage: "GATEKEEPER'S QUIZ • STAGE IV",
-    points: 8,
-    hint: "In the tongue of the old world, the flame is 'Ignis' and silence is 'Tacitus'. Connect the two words.",
-    options: [
-      { key: 'A', label: 'SELECT A', text: 'Ignis Tacitus', isCorrect: true, theme: 'green' },
-      { key: 'B', label: 'SELECT B', text: 'Flamina Rubra', isCorrect: false, theme: 'red' },
-      { key: 'C', label: 'SELECT C', text: 'Aetheris Silentium', isCorrect: false, theme: 'blue' },
-      { key: 'D', label: 'SELECT D', text: 'Sol Invictus', isCorrect: false, theme: 'yellow' },
-    ]
-  },
-  {
-    question: "Which resonance frequency shatters the crystal shield of the guardian?",
-    stage: "GATEKEEPER'S QUIZ • STAGE V",
-    points: 5,
-    hint: "A standard pitch fork vibrates at A440. The resonant frequency is exactly the octave above.",
-    options: [
-      { key: 'A', label: 'SELECT A', text: '120 Hz Hum', isCorrect: false, theme: 'green' },
-      { key: 'B', label: 'SELECT B', text: '440 Hz Tone', isCorrect: false, theme: 'red' },
-      { key: 'C', label: 'SELECT C', text: '880 Hz Octave', isCorrect: true, theme: 'blue' },
-      { key: 'D', label: 'SELECT D', text: '50 Hz Infrasound', isCorrect: false, theme: 'yellow' },
-    ]
-  },
-  {
-    question: "To bypass the Shadowed Gate, what vocal resonance must you maintain?",
-    stage: "GATEKEEPER'S QUIZ • STAGE VI",
-    points: 5,
-    hint: "The gate rejects airy tones or vocal fry. It demands a centered and stable sound.",
-    options: [
-      { key: 'A', label: 'SELECT A', text: 'Airy Falsetto', isCorrect: false, theme: 'green' },
-      { key: 'B', label: 'SELECT B', text: 'Gravelly Vocal Fry', isCorrect: false, theme: 'red' },
-      { key: 'C', label: 'SELECT C', text: 'Steady Chest Voice', isCorrect: true, theme: 'blue' },
-      { key: 'D', label: 'SELECT D', text: 'Guttural Growl', isCorrect: false, theme: 'yellow' },
-    ]
-  }
-]
+// Map 50 General Knowledge Questions for Demon Guardian Barrier
+const THEMES = ['green', 'red', 'blue', 'yellow']
+const LABELS = ['SELECT A', 'SELECT B', 'SELECT C', 'SELECT D']
+
+const QUESTIONS = rawQuizQuestions.map(q => ({
+  id: q.id,
+  question: q.question,
+  stage: `GATEKEEPER'S QUIZ • ${q.levelTitle.toUpperCase()}`,
+  points: 1,
+  hint: `Consider all choices carefully, then speak your selected option clearly.`,
+  options: q.options.map((opt, idx) => ({
+    key: opt.key,
+    label: LABELS[idx] || `SELECT ${opt.key}`,
+    text: opt.text,
+    isCorrect: opt.isCorrect,
+    theme: THEMES[idx] || 'blue'
+  }))
+}))
 
 const hasSpeechSupport = typeof window !== 'undefined' && !!(window.SpeechRecognition || window.webkitSpeechRecognition)
 
@@ -53,7 +33,7 @@ function DemonGuardian() {
   const [encounterState, setEncounterState] = useState('QUIZ')
 
   // Quiz & standing states
-  const [score, setScore] = useState(32) // Starts at 32/50 as shown in screenshot
+  const [score, setScore] = useState(0) // Starts at 0/50
   const [currentIdx, setCurrentIdx] = useState(0)
   const [selectedKey, setSelectedKey] = useState(null)
   const [isAnswered, setIsAnswered] = useState(false)
@@ -76,6 +56,9 @@ function DemonGuardian() {
 
   // References for Web Speech API to keep state and handlers fresh
   const recognitionRef = useRef(null)
+  const isSpeakingTTSRef = useRef(false)
+  const speechCooldownUntilRef = useRef(0)
+  const lastSpokenKeyRef = useRef('')
   const stateRef = useRef({ encounterState, currentIdx, isAnswered, hintsLeft, selectedKey, score, showForfeitModal })
   const voiceHandlerRef = useRef(null)
 
@@ -91,17 +74,74 @@ function DemonGuardian() {
     document.title = "Demon's Challenge Quiz - Vocal Quest"
   }, [])
 
-  // Automatically announce quiz question when displayed or when question changes
+  // Automatically announce quiz question or completion summary EXACTLY ONCE per question
   useEffect(() => {
-    if (encounterState === 'QUIZ' && currentQuestion && !isMuted) {
-      const textToSpeak = `${currentQuestion.question}. Option A: ${currentQuestion.options[0].text}. Option B: ${currentQuestion.options[1].text}. Option C: ${currentQuestion.options[2].text}. Option D: ${currentQuestion.options[3].text}.`
-      speak(textToSpeak)
+    if (!isMuted) {
+      const speechKey = `${encounterState}_${currentIdx}`
+      if (lastSpokenKeyRef.current === speechKey) return
+
+      if (encounterState === 'QUIZ' && currentQuestion) {
+        lastSpokenKeyRef.current = speechKey
+        const textToSpeak = `${currentQuestion.question}. Option A: ${currentQuestion.options[0].text}. Option B: ${currentQuestion.options[1].text}. Option C: ${currentQuestion.options[2].text}. Option D: ${currentQuestion.options[3].text}.`
+        isSpeakingTTSRef.current = true
+        speak(textToSpeak, () => {
+          isSpeakingTTSRef.current = false
+          speechCooldownUntilRef.current = Date.now() + 600 // 600ms post-narration cooldown
+        })
+      } else if (encounterState === 'COMPLETED') {
+        lastSpokenKeyRef.current = speechKey
+        const passStatusText = score >= targetScoreToPass ? "Mastered and Passed." : "Did not meet pass score."
+        const completionText = `Challenge Completed! Gatekeeper's Quiz. Final Standing: ${score} out of 50 points. ${passStatusText} Your vocal power and knowledge have pierced the gate's ancient seals. The pathway deeper into the obsidian cavern is now open. Say 'retry' to play again, or say 'continue' to advance to the Game Hub.`
+        isSpeakingTTSRef.current = true
+        speak(completionText, () => {
+          isSpeakingTTSRef.current = false
+          speechCooldownUntilRef.current = Date.now() + 600
+        })
+      }
+    } else {
+      isSpeakingTTSRef.current = false
+      stop()
     }
-  }, [currentIdx, encounterState, isMuted, speak])
+  }, [currentIdx, encounterState, isMuted, currentQuestion, score, speak, stop])
+
+  // Toggle Handler for Microphone & Voice Narration
+  const toggleMicrophoneVoice = () => {
+    if (isListening || !isMuted) {
+      isSpeakingTTSRef.current = false
+      stop()
+      if (recognitionRef.current) {
+        try { recognitionRef.current.stop() } catch (e) {}
+      }
+      setIsListening(false)
+      setIsMuted(true)
+    } else {
+      setIsMuted(false)
+      setIsListening(true)
+      if (encounterState === 'QUIZ' && currentQuestion) {
+        const textToSpeak = `${currentQuestion.question}. Option A: ${currentQuestion.options[0].text}. Option B: ${currentQuestion.options[1].text}. Option C: ${currentQuestion.options[2].text}. Option D: ${currentQuestion.options[3].text}.`
+        isSpeakingTTSRef.current = true
+        speak(textToSpeak, () => {
+          isSpeakingTTSRef.current = false
+          speechCooldownUntilRef.current = Date.now() + 600
+        })
+      } else if (encounterState === 'COMPLETED') {
+        const passStatusText = score >= targetScoreToPass ? "Mastered and Passed." : "Did not meet pass score."
+        const completionText = `Challenge Completed! Gatekeeper's Quiz. Final Standing: ${score} out of 50 points. ${passStatusText} Your vocal power and knowledge have pierced the gate's ancient seals. Say 'retry' to play again, or say 'continue' to advance.`
+        isSpeakingTTSRef.current = true
+        speak(completionText, () => {
+          isSpeakingTTSRef.current = false
+          speechCooldownUntilRef.current = Date.now() + 600
+        })
+      }
+      if (recognitionRef.current) {
+        try { recognitionRef.current.start() } catch (e) {}
+      }
+    }
+  }
 
   // Handle option selection
   const selectOption = (option) => {
-    if (stateRef.current.isAnswered) return
+    if (!option || stateRef.current.isAnswered) return
     setSelectedKey(option.key)
     setIsAnswered(true)
 
@@ -149,8 +189,9 @@ function DemonGuardian() {
 
   // Reset encounter
   const handleReset = () => {
+    lastSpokenKeyRef.current = ''
     setEncounterState('QUIZ')
-    setScore(32)
+    setScore(0)
     setCurrentIdx(0)
     setSelectedKey(null)
     setIsAnswered(false)
@@ -162,13 +203,34 @@ function DemonGuardian() {
 
   // Voice Command routing
   const handleVoiceCommand = (transcript) => {
-    const cleanTranscript = transcript.replace(/[.,#!?]/g, "").trim().toLowerCase();
-    setSpeechFeedback(`Heard voice command: "${cleanTranscript}"`)
-    setRecognizedCommand(cleanTranscript)
+    // DO NOT PROCESS IF ALREADY ANSWERED OR SYSTEM NARRATION IS SPEAKING OR IN COOLDOWN
+    if (stateRef.current.isAnswered) return
+    if (isSpeakingTTSRef.current || (typeof window !== 'undefined' && window.speechSynthesis && window.speechSynthesis.speaking)) {
+      console.log("Ignored microphone input because Text-to-Speech narration is speaking.")
+      return
+    }
+    if (Date.now() < speechCooldownUntilRef.current) {
+      console.log("Ignored microphone input during post-narration cooldown.")
+      return
+    }
 
-    // Trigger equalizer wave pulse directly on recognition
-    setWavePulse(true)
-    setTimeout(() => setWavePulse(false), 1200)
+    let cleanTranscript = transcript.replace(/[.,#!?]/g, "").trim().toLowerCase();
+    if (!cleanTranscript) return
+
+    // Phonetic normalizations for Web Speech API transcription variations
+    cleanTranscript = cleanTranscript
+      .replace(/\boption 8\b/g, 'option a')
+      .replace(/\boption hey\b/g, 'option a')
+      .replace(/\boption ay\b/g, 'option a')
+      .replace(/\boption eh\b/g, 'option a')
+      .replace(/\boption be\b/g, 'option b')
+      .replace(/\boption bee\b/g, 'option b')
+      .replace(/\boption 2\b/g, 'option b')
+      .replace(/\boption see\b/g, 'option c')
+      .replace(/\boption sea\b/g, 'option c')
+      .replace(/\boption 3\b/g, 'option c')
+      .replace(/\boption dee\b/g, 'option d')
+      .replace(/\boption 4\b/g, 'option d')
 
     const curState = stateRef.current.encounterState
 
@@ -194,60 +256,95 @@ function DemonGuardian() {
 
     // 3. QUIZ STATE COMMANDS
     if (curState === 'QUIZ') {
-      const optionsList = QUESTIONS[stateRef.current.currentIdx].options
+      const currentOptList = QUESTIONS[stateRef.current.currentIdx]?.options || []
 
-      // Broader and more error-tolerant transcript matching rules (removing punctuation first)
-      const matchA = cleanTranscript === 'a' ||
-        cleanTranscript.includes('select a') ||
-        cleanTranscript.includes('option a') ||
-        cleanTranscript.includes('alpha') ||
-        cleanTranscript.includes('first') ||
-        cleanTranscript.includes('one') ||
-        cleanTranscript.includes('ignis') ||
-        cleanTranscript.includes('tacitus')
+      const optAText = currentOptList[0]?.text || ''
+      const optBText = currentOptList[1]?.text || ''
+      const optCText = currentOptList[2]?.text || ''
+      const optDText = currentOptList[3]?.text || ''
 
-      const matchB = cleanTranscript === 'b' ||
-        cleanTranscript.includes('select b') ||
-        cleanTranscript.includes('option b') ||
-        cleanTranscript.includes('bravo') ||
-        cleanTranscript.includes('second') ||
-        cleanTranscript.includes('two') ||
-        cleanTranscript.includes('flamina') ||
-        cleanTranscript.includes('rubra')
+      // Clean text helper for matching words without special symbols
+      const cleanOptionText = (text) => text.toLowerCase().replace(/°c/g, ' degrees celsius').replace(/[.,#!?°]/g, '').trim()
 
-      const matchC = cleanTranscript === 'c' ||
-        cleanTranscript.includes('select c') ||
-        cleanTranscript.includes('option c') ||
-        cleanTranscript.includes('charlie') ||
-        cleanTranscript.includes('third') ||
-        cleanTranscript.includes('three') ||
-        cleanTranscript.includes('aetheris') ||
-        cleanTranscript.includes('silentium')
+      const optA = cleanOptionText(optAText)
+      const optB = cleanOptionText(optBText)
+      const optC = cleanOptionText(optCText)
+      const optD = cleanOptionText(optDText)
 
-      const matchD = cleanTranscript === 'd' ||
-        cleanTranscript.includes('select d') ||
-        cleanTranscript.includes('option d') ||
-        cleanTranscript.includes('delta') ||
-        cleanTranscript.includes('fourth') ||
-        cleanTranscript.includes('four') ||
-        cleanTranscript.includes('sol') ||
-        cleanTranscript.includes('invictus')
+      // Check if spoken phrase matches option text cleanly
+      const isTextMatch = (optStr) => {
+        if (!optStr || optStr.length < 2) return false
+        return cleanTranscript === optStr || cleanTranscript.includes(optStr)
+      }
+
+      // Option A Triggers (Excluded standalone "a" to prevent false triggers e.g. "a spring"):
+      const matchA =
+        cleanTranscript === 'option a' ||
+        cleanTranscript === 'select a' ||
+        cleanTranscript === 'choice a' ||
+        cleanTranscript === 'answer a' ||
+        cleanTranscript === 'alpha' ||
+        isTextMatch(optA)
+
+      // Option B Triggers:
+      const matchB =
+        cleanTranscript === 'option b' ||
+        cleanTranscript === 'select b' ||
+        cleanTranscript === 'choice b' ||
+        cleanTranscript === 'answer b' ||
+        cleanTranscript === 'bravo' ||
+        isTextMatch(optB)
+
+      // Option C Triggers:
+      const matchC =
+        cleanTranscript === 'option c' ||
+        cleanTranscript === 'select c' ||
+        cleanTranscript === 'choice c' ||
+        cleanTranscript === 'answer c' ||
+        cleanTranscript === 'charlie' ||
+        isTextMatch(optC)
+
+      // Option D Triggers:
+      const matchD =
+        cleanTranscript === 'option d' ||
+        cleanTranscript === 'select d' ||
+        cleanTranscript === 'choice d' ||
+        cleanTranscript === 'answer d' ||
+        cleanTranscript === 'delta' ||
+        isTextMatch(optD)
 
       if (matchA) {
-        selectOption(optionsList[0])
+        setSpeechFeedback(`Heard voice command: "${cleanTranscript}"`)
+        setRecognizedCommand(cleanTranscript)
+        setWavePulse(true)
+        setTimeout(() => setWavePulse(false), 1200)
+        selectOption(currentOptList[0])
       } else if (matchB) {
-        selectOption(optionsList[1])
+        setSpeechFeedback(`Heard voice command: "${cleanTranscript}"`)
+        setRecognizedCommand(cleanTranscript)
+        setWavePulse(true)
+        setTimeout(() => setWavePulse(false), 1200)
+        selectOption(currentOptList[1])
       } else if (matchC) {
-        selectOption(optionsList[2])
+        setSpeechFeedback(`Heard voice command: "${cleanTranscript}"`)
+        setRecognizedCommand(cleanTranscript)
+        setWavePulse(true)
+        setTimeout(() => setWavePulse(false), 1200)
+        selectOption(currentOptList[2])
       } else if (matchD) {
-        selectOption(optionsList[3])
+        setSpeechFeedback(`Heard voice command: "${cleanTranscript}"`)
+        setRecognizedCommand(cleanTranscript)
+        setWavePulse(true)
+        setTimeout(() => setWavePulse(false), 1200)
+        selectOption(currentOptList[3])
       } else if (cleanTranscript.includes('hint') || cleanTranscript.includes('clue') || cleanTranscript.includes('help')) {
+        setSpeechFeedback(`Heard voice command: "${cleanTranscript}"`)
+        setRecognizedCommand(cleanTranscript)
         handleUseHint()
       } else if (cleanTranscript.includes('forfeit') || cleanTranscript.includes('give up') || cleanTranscript.includes('quit') || cleanTranscript.includes('exit')) {
+        setSpeechFeedback(`Heard voice command: "${cleanTranscript}"`)
+        setRecognizedCommand(cleanTranscript)
         setShowForfeitModal(true)
-      } else {
-        // Clear unrecognized speech after 3 seconds
-        setTimeout(() => setSpeechFeedback(''), 3000)
       }
     }
   }
@@ -267,14 +364,17 @@ function DemonGuardian() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
     const rec = new SpeechRecognition()
     rec.continuous = true // Keep listening continuously
-    rec.interimResults = false
+    rec.interimResults = true // Fast real-time recognition
     rec.lang = 'en-US'
 
     rec.onresult = (event) => {
       if (!active) return
-      // Get the latest result item index
-      const resultIndex = event.resultIndex
-      const transcript = event.results[resultIndex][0].transcript.trim()
+      let currentResult = ''
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        currentResult += event.results[i][0].transcript
+      }
+      const transcript = currentResult.trim()
+      if (!transcript) return
       console.log('Voice Input Heard (raw):', transcript)
       if (voiceHandlerRef.current) {
         voiceHandlerRef.current(transcript)
@@ -479,9 +579,9 @@ function DemonGuardian() {
                 {currentQuestion.question}
               </h1>
 
-              {/* Quiz Tag */}
+              {/* Quiz Tag & Progress */}
               <p className="text-center text-[10px] font-black uppercase tracking-[0.25em] text-[#cba33f]/95">
-                {currentQuestion.stage}
+                QUESTION {currentIdx + 1} OF {QUESTIONS.length} • {currentQuestion.stage}
               </p>
             </div>
 
@@ -627,90 +727,22 @@ function DemonGuardian() {
           </div>
         )}
 
-        {/* BOTTOM VOICE DECK PANEL - Reuses identical voice layout from WhisperingWoods */}
-        <div className="mt-10 flex flex-wrap items-center justify-between gap-6 bg-[#041628]/35 border border-[#0f3458]/30 p-5 rounded-2xl backdrop-blur-md shadow-inner">
-
-          {/* LEFT: VOICE STATUS BOX */}
-          <div className="flex items-center gap-4">
-
-            {/* Visual Equalizer Circle */}
-            <div
-              onClick={() => setIsListening(!isListening)}
-              className={`w-14 h-14 rounded-full flex items-center justify-center bg-[#031220] border-2 cursor-pointer transition-all duration-300 ${isListening
-                ? 'border-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.25)] hover:shadow-[0_0_20px_rgba(34,211,238,0.45)]'
-                : 'border-rose-500/50 shadow-[0_0_10px_rgba(239,68,68,0.15)] hover:shadow-[0_0_15px_rgba(239,68,68,0.3)]'
-                }`}
-              style={{
-                animation: isListening
-                  ? 'pulseGlow 2.5s infinite ease-in-out'
-                  : 'pulseGlowMuted 3s infinite ease-in-out'
-              }}
-              title={isListening ? 'Microphone Active' : 'Microphone Inactive'}
-            >
-              {/* Equalizer Bars */}
-              <div className="flex items-end justify-center gap-1.5 h-6 w-8">
-                {isListening ? (
-                  <>
-                    <span className={`w-1 rounded-full bg-cyan-400 ${wavePulse ? 'eq-bar-fast-1' : 'eq-bar-1'}`} />
-                    <span className={`w-1 rounded-full bg-cyan-400 ${wavePulse ? 'eq-bar-fast-2' : 'eq-bar-2'}`} />
-                    <span className={`w-1 rounded-full bg-cyan-400 ${wavePulse ? 'eq-bar-fast-3' : 'eq-bar-3'}`} />
-                    <span className={`w-1 rounded-full bg-cyan-400 ${wavePulse ? 'eq-bar-fast-4' : 'eq-bar-4'}`} />
-                  </>
-                ) : (
-                  <>
-                    <span className="w-1 h-[3px] rounded-full bg-rose-500/40" />
-                    <span className="w-1 h-[3px] rounded-full bg-rose-500/40" />
-                    <span className="w-1 h-[3px] rounded-full bg-rose-500/40" />
-                    <span className="w-1 h-[3px] rounded-full bg-rose-500/40" />
-                  </>
-                )}
-              </div>
-            </div>
-
-            {/* Status Information labels */}
-            <div className="flex flex-col min-w-[180px]">
-              <span className="text-slate-500 text-[9px] font-bold tracking-[0.2em] uppercase">
-                Voice Status
-              </span>
-              <span className={`text-sm font-bold tracking-wide transition-colors duration-300 mt-0.5 flex items-center gap-1.5 ${isListening ? 'text-cyan-400' : 'text-slate-500'
-                }`}>
-                {isListening ? (
-                  <>
-                    Listening...
-                    <span className="inline-flex gap-0.5">
-                      <span className="w-1 h-1 bg-cyan-400 rounded-full animate-[bounce_1s_infinite_100ms]" />
-                      <span className="w-1 h-1 bg-cyan-400 rounded-full animate-[bounce_1s_infinite_200ms]" />
-                      <span className="w-1 h-1 bg-cyan-400 rounded-full animate-[bounce_1s_infinite_300ms]" />
-                    </span>
-                  </>
-                ) : (
-                  'Offline'
-                )}
-              </span>
-
-              <div className="text-[11px] text-slate-400 mt-1.5 flex flex-wrap items-center gap-1">
-                <span>"Command Recognized:</span>
-                <span className="text-[#cba33f] font-bold">
-                  {recognizedCommand ? `"${recognizedCommand}"` : 'None"'}
-                </span>
-              </div>
-            </div>
-
-          </div>
+        {/* BOTTOM VOICE DECK PANEL */}
+        <div className="mt-10 flex items-center justify-center gap-6 bg-[#041628]/35 border border-[#0f3458]/30 p-5 rounded-2xl backdrop-blur-md shadow-inner">
 
           {/* CENTER: PILL CONTROLS */}
           <div className="flex items-center bg-[#031220]/80 border border-[#0f3458]/70 px-4 py-2.5 rounded-full shadow-2xl">
 
             {/* Microphone Toggle (Gold pill) */}
             <button
-              onClick={() => setIsListening(!isListening)}
-              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 transform active:scale-95 cursor-pointer ${isListening
+              onClick={toggleMicrophoneVoice}
+              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 transform active:scale-95 cursor-pointer ${!isMuted && isListening
                 ? 'bg-[#cba33f] text-[#031220] shadow-[0_0_12px_rgba(203,163,63,0.3)] hover:brightness-105'
                 : 'bg-rose-600 text-white shadow-[0_0_12px_rgba(239,68,68,0.3)] hover:bg-rose-700'
                 }`}
-              title={isListening ? 'Mute Microphone' : 'Activate Microphone'}
+              title={!isMuted && isListening ? 'Turn Off Microphone & Voice' : 'Activate Microphone & Voice'}
             >
-              {isListening ? (
+              {!isMuted && isListening ? (
                 /* Microphone On Icon */
                 <svg className="w-5 h-5 font-bold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
@@ -719,7 +751,7 @@ function DemonGuardian() {
                 /* Microphone Off/Slashed Icon */
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+                  <line x1="3" y1="3" x2="21" y2="21" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
                 </svg>
               )}
             </button>
@@ -750,7 +782,7 @@ function DemonGuardian() {
 
               {/* Mute/Unmute Audio indicator */}
               <button
-                onClick={() => setIsMuted(!isMuted)}
+                onClick={toggleMicrophoneVoice}
                 className={`p-2 rounded-lg hover:bg-slate-800/35 transition-all cursor-pointer ${isMuted ? 'text-rose-500' : 'text-slate-400 hover:text-white'
                   }`}
                 title={isMuted ? 'Unmute Audio' : 'Mute Audio'}
@@ -758,7 +790,7 @@ function DemonGuardian() {
                 {isMuted ? (
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+                    <line x1="3" y1="3" x2="21" y2="21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                   </svg>
                 ) : (
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -770,9 +802,6 @@ function DemonGuardian() {
             </div>
 
           </div>
-
-          {/* BALANCING FLEX SPACE */}
-          <div className="hidden lg:block w-[180px]"></div>
 
         </div>
 

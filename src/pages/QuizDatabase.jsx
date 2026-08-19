@@ -1,18 +1,18 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Search, 
-  Plus, 
-  Edit3, 
-  Trash2, 
-  Volume2, 
-  Filter, 
-  HelpCircle, 
-  CheckCircle2, 
-  X, 
-  Database, 
-  Sparkles, 
-  Mic, 
+import {
+  Search,
+  Plus,
+  Edit3,
+  Trash2,
+  Volume2,
+  Filter,
+  HelpCircle,
+  CheckCircle2,
+  X,
+  Database,
+  Sparkles,
+  Mic,
   Layers,
   ArrowUpDown
 } from 'lucide-react';
@@ -101,7 +101,7 @@ export default function QuizDatabase() {
   // Filtered Questions
   const filteredQuestions = useMemo(() => {
     return questions.filter(q => {
-      const matchesSearch = 
+      const matchesSearch =
         q.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
         q.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
         q.correctAnswer.toLowerCase().includes(searchQuery.toLowerCase());
@@ -196,13 +196,13 @@ export default function QuizDatabase() {
 
   return (
     <div className="flex min-h-screen bg-[#070b13] text-slate-100 font-sans antialiased overflow-x-hidden select-none">
-      
+
       {/* Admin Sidebar */}
       <AdminSidebar />
 
       {/* Main Workspace Floor */}
       <main className="flex-1 flex flex-col items-start justify-start p-6 lg:p-10 max-w-7xl w-full mx-auto space-y-8 z-10">
-        
+
         {/* Header Title Section */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between w-full gap-4 pb-6 border-b border-slate-800/80">
           <div>
@@ -229,7 +229,7 @@ export default function QuizDatabase() {
             </button>
 
             {/* Admin Profile Icon */}
-            <div 
+            <div
               onClick={() => navigate('/admin/profile')}
               className="w-10 h-10 rounded-full border-2 border-[#d9b74f] overflow-hidden bg-[#0A2E52] p-0.5 cursor-pointer hover:scale-105 transition flex items-center justify-center shadow-[0_0_10px_rgba(217,183,79,0.35)]"
               title="Admin Profile"
@@ -286,7 +286,7 @@ export default function QuizDatabase() {
 
         {/* Filter & Search Utility Bar */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 w-full bg-[#0B2239] border border-slate-800 p-4 rounded-2xl">
-          
+
           {/* Search Box */}
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-500" />
@@ -350,7 +350,7 @@ export default function QuizDatabase() {
                   filteredQuestions.map((q) => (
                     <tr key={q.id} className="hover:bg-slate-800/40 transition">
                       <td className="py-4 px-6 font-mono font-bold text-amber-400">{q.id}</td>
-                      
+
                       <td className="py-4 px-6 max-w-sm">
                         <p className="font-semibold text-white mb-1 leading-snug">{q.question}</p>
                         <div className="flex items-center gap-1.5 text-[10px] text-slate-400">
@@ -365,11 +365,10 @@ export default function QuizDatabase() {
                       </td>
 
                       <td className="py-4 px-6">
-                        <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
-                          q.difficulty === 'Easy' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
-                          q.difficulty === 'Medium' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :
-                          'bg-rose-500/10 text-rose-400 border border-rose-500/20'
-                        }`}>
+                        <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${q.difficulty === 'Easy' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
+                            q.difficulty === 'Medium' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :
+                              'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+                          }`}>
                           {q.difficulty}
                         </span>
                       </td>
@@ -430,7 +429,7 @@ export default function QuizDatabase() {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
           <div className="bg-[#0B2239] border border-slate-700 rounded-3xl w-full max-w-xl p-6 sm:p-8 space-y-6 shadow-2xl relative">
-            
+
             <button
               onClick={() => setIsModalOpen(false)}
               className="absolute top-6 right-6 text-slate-400 hover:text-white transition cursor-pointer"
@@ -449,7 +448,7 @@ export default function QuizDatabase() {
             </div>
 
             <form onSubmit={handleSaveQuestion} className="space-y-4 text-xs">
-              
+
               <div>
                 <label className="block font-bold text-slate-300 uppercase tracking-wider mb-1.5">
                   Question Prompt Text

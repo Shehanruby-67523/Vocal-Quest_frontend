@@ -45,19 +45,19 @@ function WhisperingWoods() {
     }
   }
 
-  // 1. Define command map for voice recognition with Synonym & Fuzzy support
+  // 1. Define command map for voice recognition with Synonym, Fuzzy & Phonetic support
   const commandMap = useMemo(
     () => ({
-      'inspect, shrine, look, check, examine': () => handleAction('Inspect shrine', 'Inspect the shrine'),
-      'cast, light, spell, illuminate, shine': () => handleAction('Cast light', 'Cast light spell'),
-      'follow, trail, path, walk, go': () => handleAction('Follow trail', 'Follow the trail'),
-      'demon, guardian, next, continue, proceed': () => handleAction('Demon Guardian', 'Demon Guardian'),
-      'dashboard, journey': () => navigate('/player-journey'),
-      'game hub, hub': () => navigate('/game-hub'),
-      'achievements, achievement': () => navigate('/achievements'),
-      'profile': () => navigate('/profile'),
-      'voice print, voiceprint': () => navigate('/voice-print'),
-      'settings, options': () => navigate('/settings'),
+      'inspect, shrine, look, check, examine, shrin, inspek': () => handleAction('Inspect shrine', 'Inspect the shrine'),
+      'cast, light, spell, illuminate, shine, lit, kast': () => handleAction('Cast light', 'Cast light spell'),
+      'follow, trail, path, walk, go, folow, tral': () => handleAction('Follow trail', 'Follow the trail'),
+      'demon, damon, dimon, daemon, guardian, gate, challenge, next, continue, proceed, forward': () => handleAction('Demon Guardian', 'Demon Guardian'),
+      'dashboard, journey, player journey': () => navigate('/player-journey'),
+      'game hub, hub, main hub': () => navigate('/game-hub'),
+      'achievements, achievement, badge, badges': () => navigate('/achievements'),
+      'profile, account, user profile': () => navigate('/profile'),
+      'voice print, voiceprint, voice': () => navigate('/voice-print'),
+      'settings, options, config': () => navigate('/settings'),
     }),
     [navigate]
   )

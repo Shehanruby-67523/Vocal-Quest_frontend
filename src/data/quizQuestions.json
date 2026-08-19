@@ -1,0 +1,702 @@
+[
+  {
+    "id": "Q-101",
+    "level": 1,
+    "levelTitle": "Level 1 — Easy",
+    "question": "What color do you get when you mix blue and yellow?",
+    "options": [
+      { "key": "A", "text": "Green", "isCorrect": true },
+      { "key": "B", "text": "Purple", "isCorrect": false },
+      { "key": "C", "text": "Orange", "isCorrect": false },
+      { "key": "D", "text": "Red", "isCorrect": false }
+    ],
+    "correctKey": "A",
+    "correctAnswer": "Green"
+  },
+  {
+    "id": "Q-102",
+    "level": 1,
+    "levelTitle": "Level 1 — Easy",
+    "question": "How many days are there in a week?",
+    "options": [
+      { "key": "A", "text": "5", "isCorrect": false },
+      { "key": "B", "text": "6", "isCorrect": false },
+      { "key": "C", "text": "7", "isCorrect": true },
+      { "key": "D", "text": "8", "isCorrect": false }
+    ],
+    "correctKey": "C",
+    "correctAnswer": "7"
+  },
+  {
+    "id": "Q-103",
+    "level": 1,
+    "levelTitle": "Level 1 — Easy",
+    "question": "What is the capital city of France?",
+    "options": [
+      { "key": "A", "text": "Paris", "isCorrect": true },
+      { "key": "B", "text": "London", "isCorrect": false },
+      { "key": "C", "text": "Rome", "isCorrect": false },
+      { "key": "D", "text": "Madrid", "isCorrect": false }
+    ],
+    "correctKey": "A",
+    "correctAnswer": "Paris"
+  },
+  {
+    "id": "Q-104",
+    "level": 1,
+    "levelTitle": "Level 1 — Easy",
+    "question": "Which animal is known as the \"King of the Jungle\"?",
+    "options": [
+      { "key": "A", "text": "Tiger", "isCorrect": false },
+      { "key": "B", "text": "Lion", "isCorrect": true },
+      { "key": "C", "text": "Elephant", "isCorrect": false },
+      { "key": "D", "text": "Bear", "isCorrect": false }
+    ],
+    "correctKey": "B",
+    "correctAnswer": "Lion"
+  },
+  {
+    "id": "Q-105",
+    "level": 1,
+    "levelTitle": "Level 1 — Easy",
+    "question": "How many legs does a spider have?",
+    "options": [
+      { "key": "A", "text": "6", "isCorrect": false },
+      { "key": "B", "text": "8", "isCorrect": true },
+      { "key": "C", "text": "10", "isCorrect": false },
+      { "key": "D", "text": "12", "isCorrect": false }
+    ],
+    "correctKey": "B",
+    "correctAnswer": "8"
+  },
+  {
+    "id": "Q-106",
+    "level": 1,
+    "levelTitle": "Level 1 — Easy",
+    "question": "What is the largest planet in our solar system?",
+    "options": [
+      { "key": "A", "text": "Earth", "isCorrect": false },
+      { "key": "B", "text": "Mars", "isCorrect": false },
+      { "key": "C", "text": "Jupiter", "isCorrect": true },
+      { "key": "D", "text": "Saturn", "isCorrect": false }
+    ],
+    "correctKey": "C",
+    "correctAnswer": "Jupiter"
+  },
+  {
+    "id": "Q-107",
+    "level": 1,
+    "levelTitle": "Level 1 — Easy",
+    "question": "What do bees produce?",
+    "options": [
+      { "key": "A", "text": "Milk", "isCorrect": false },
+      { "key": "B", "text": "Honey", "isCorrect": true },
+      { "key": "C", "text": "Silk", "isCorrect": false },
+      { "key": "D", "text": "Wool", "isCorrect": false }
+    ],
+    "correctKey": "B",
+    "correctAnswer": "Honey"
+  },
+  {
+    "id": "Q-108",
+    "level": 1,
+    "levelTitle": "Level 1 — Easy",
+    "question": "Which season comes right after winter?",
+    "options": [
+      { "key": "A", "text": "Summer", "isCorrect": false },
+      { "key": "B", "text": "Autumn", "isCorrect": false },
+      { "key": "C", "text": "Spring", "isCorrect": true },
+      { "key": "D", "text": "Rainy season", "isCorrect": false }
+    ],
+    "correctKey": "C",
+    "correctAnswer": "Spring"
+  },
+  {
+    "id": "Q-109",
+    "level": 1,
+    "levelTitle": "Level 1 — Easy",
+    "question": "What is the freezing point of water in Celsius?",
+    "options": [
+      { "key": "A", "text": "0°C", "isCorrect": true },
+      { "key": "B", "text": "10°C", "isCorrect": false },
+      { "key": "C", "text": "50°C", "isCorrect": false },
+      { "key": "D", "text": "100°C", "isCorrect": false }
+    ],
+    "correctKey": "A",
+    "correctAnswer": "0°C"
+  },
+  {
+    "id": "Q-110",
+    "level": 1,
+    "levelTitle": "Level 1 — Easy",
+    "question": "How many continents are there on Earth?",
+    "options": [
+      { "key": "A", "text": "5", "isCorrect": false },
+      { "key": "B", "text": "6", "isCorrect": false },
+      { "key": "C", "text": "7", "isCorrect": true },
+      { "key": "D", "text": "8", "isCorrect": false }
+    ],
+    "correctKey": "C",
+    "correctAnswer": "7"
+  },
+  {
+    "id": "Q-111",
+    "level": 2,
+    "levelTitle": "Level 2 — Easy–Medium",
+    "question": "Which ocean is the largest in the world?",
+    "options": [
+      { "key": "A", "text": "Atlantic", "isCorrect": false },
+      { "key": "B", "text": "Indian", "isCorrect": false },
+      { "key": "C", "text": "Arctic", "isCorrect": false },
+      { "key": "D", "text": "Pacific", "isCorrect": true }
+    ],
+    "correctKey": "D",
+    "correctAnswer": "Pacific"
+  },
+  {
+    "id": "Q-112",
+    "level": 2,
+    "levelTitle": "Level 2 — Easy–Medium",
+    "question": "Who wrote the play \"Romeo and Juliet\"?",
+    "options": [
+      { "key": "A", "text": "Charles Dickens", "isCorrect": false },
+      { "key": "B", "text": "William Shakespeare", "isCorrect": true },
+      { "key": "C", "text": "Mark Twain", "isCorrect": false },
+      { "key": "D", "text": "Jane Austen", "isCorrect": false }
+    ],
+    "correctKey": "B",
+    "correctAnswer": "William Shakespeare"
+  },
+  {
+    "id": "Q-113",
+    "level": 2,
+    "levelTitle": "Level 2 — Easy–Medium",
+    "question": "What gas do plants absorb from the air for photosynthesis?",
+    "options": [
+      { "key": "A", "text": "Oxygen", "isCorrect": false },
+      { "key": "B", "text": "Nitrogen", "isCorrect": false },
+      { "key": "C", "text": "Carbon Dioxide", "isCorrect": true },
+      { "key": "D", "text": "Hydrogen", "isCorrect": false }
+    ],
+    "correctKey": "C",
+    "correctAnswer": "Carbon Dioxide"
+  },
+  {
+    "id": "Q-114",
+    "level": 2,
+    "levelTitle": "Level 2 — Easy–Medium",
+    "question": "What is the tallest mountain in the world?",
+    "options": [
+      { "key": "A", "text": "K2", "isCorrect": false },
+      { "key": "B", "text": "Mount Kilimanjaro", "isCorrect": false },
+      { "key": "C", "text": "Mount Everest", "isCorrect": true },
+      { "key": "D", "text": "Denali", "isCorrect": false }
+    ],
+    "correctKey": "C",
+    "correctAnswer": "Mount Everest"
+  },
+  {
+    "id": "Q-115",
+    "level": 2,
+    "levelTitle": "Level 2 — Easy–Medium",
+    "question": "Which planet is known as the \"Red Planet\"?",
+    "options": [
+      { "key": "A", "text": "Venus", "isCorrect": false },
+      { "key": "B", "text": "Mars", "isCorrect": true },
+      { "key": "C", "text": "Mercury", "isCorrect": false },
+      { "key": "D", "text": "Neptune", "isCorrect": false }
+    ],
+    "correctKey": "B",
+    "correctAnswer": "Mars"
+  },
+  {
+    "id": "Q-116",
+    "level": 2,
+    "levelTitle": "Level 2 — Easy–Medium",
+    "question": "How many players are on a standard soccer team on the field?",
+    "options": [
+      { "key": "A", "text": "9", "isCorrect": false },
+      { "key": "B", "text": "10", "isCorrect": false },
+      { "key": "C", "text": "11", "isCorrect": true },
+      { "key": "D", "text": "12", "isCorrect": false }
+    ],
+    "correctKey": "C",
+    "correctAnswer": "11"
+  },
+  {
+    "id": "Q-117",
+    "level": 2,
+    "levelTitle": "Level 2 — Easy–Medium",
+    "question": "What is the currency used in Japan?",
+    "options": [
+      { "key": "A", "text": "Won", "isCorrect": false },
+      { "key": "B", "text": "Yen", "isCorrect": true },
+      { "key": "C", "text": "Yuan", "isCorrect": false },
+      { "key": "D", "text": "Ringgit", "isCorrect": false }
+    ],
+    "correctKey": "B",
+    "correctAnswer": "Yen"
+  },
+  {
+    "id": "Q-118",
+    "level": 2,
+    "levelTitle": "Level 2 — Easy–Medium",
+    "question": "Which organ in the human body pumps blood?",
+    "options": [
+      { "key": "A", "text": "Lungs", "isCorrect": false },
+      { "key": "B", "text": "Liver", "isCorrect": false },
+      { "key": "C", "text": "Heart", "isCorrect": true },
+      { "key": "D", "text": "Kidney", "isCorrect": false }
+    ],
+    "correctKey": "C",
+    "correctAnswer": "Heart"
+  },
+  {
+    "id": "Q-119",
+    "level": 2,
+    "levelTitle": "Level 2 — Easy–Medium",
+    "question": "What is the main language spoken in Brazil?",
+    "options": [
+      { "key": "A", "text": "Spanish", "isCorrect": false },
+      { "key": "B", "text": "Portuguese", "isCorrect": true },
+      { "key": "C", "text": "French", "isCorrect": false },
+      { "key": "D", "text": "Italian", "isCorrect": false }
+    ],
+    "correctKey": "B",
+    "correctAnswer": "Portuguese"
+  },
+  {
+    "id": "Q-120",
+    "level": 2,
+    "levelTitle": "Level 2 — Easy–Medium",
+    "question": "Which of these is a primary color?",
+    "options": [
+      { "key": "A", "text": "Green", "isCorrect": false },
+      { "key": "B", "text": "Purple", "isCorrect": false },
+      { "key": "C", "text": "Red", "isCorrect": true },
+      { "key": "D", "text": "Orange", "isCorrect": false }
+    ],
+    "correctKey": "C",
+    "correctAnswer": "Red"
+  },
+  {
+    "id": "Q-121",
+    "level": 3,
+    "levelTitle": "Level 3 — Medium",
+    "question": "In which year did World War II end?",
+    "options": [
+      { "key": "A", "text": "1943", "isCorrect": false },
+      { "key": "B", "text": "1945", "isCorrect": true },
+      { "key": "C", "text": "1947", "isCorrect": false },
+      { "key": "D", "text": "1950", "isCorrect": false }
+    ],
+    "correctKey": "B",
+    "correctAnswer": "1945"
+  },
+  {
+    "id": "Q-122",
+    "level": 3,
+    "levelTitle": "Level 3 — Medium",
+    "question": "What is the chemical symbol for gold?",
+    "options": [
+      { "key": "A", "text": "Ag", "isCorrect": false },
+      { "key": "B", "text": "Au", "isCorrect": true },
+      { "key": "C", "text": "Gd", "isCorrect": false },
+      { "key": "D", "text": "Go", "isCorrect": false }
+    ],
+    "correctKey": "B",
+    "correctAnswer": "Au"
+  },
+  {
+    "id": "Q-123",
+    "level": 3,
+    "levelTitle": "Level 3 — Medium",
+    "question": "Which country is home to the Great Barrier Reef?",
+    "options": [
+      { "key": "A", "text": "Brazil", "isCorrect": false },
+      { "key": "B", "text": "South Africa", "isCorrect": false },
+      { "key": "C", "text": "Australia", "isCorrect": true },
+      { "key": "D", "text": "Indonesia", "isCorrect": false }
+    ],
+    "correctKey": "C",
+    "correctAnswer": "Australia"
+  },
+  {
+    "id": "Q-124",
+    "level": 3,
+    "levelTitle": "Level 3 — Medium",
+    "question": "Who painted the Mona Lisa?",
+    "options": [
+      { "key": "A", "text": "Vincent van Gogh", "isCorrect": false },
+      { "key": "B", "text": "Pablo Picasso", "isCorrect": false },
+      { "key": "C", "text": "Leonardo da Vinci", "isCorrect": true },
+      { "key": "D", "text": "Claude Monet", "isCorrect": false }
+    ],
+    "correctKey": "C",
+    "correctAnswer": "Leonardo da Vinci"
+  },
+  {
+    "id": "Q-125",
+    "level": 3,
+    "levelTitle": "Level 3 — Medium",
+    "question": "What is the smallest prime number?",
+    "options": [
+      { "key": "A", "text": "0", "isCorrect": false },
+      { "key": "B", "text": "1", "isCorrect": false },
+      { "key": "C", "text": "2", "isCorrect": true },
+      { "key": "D", "text": "3", "isCorrect": false }
+    ],
+    "correctKey": "C",
+    "correctAnswer": "2"
+  },
+  {
+    "id": "Q-126",
+    "level": 3,
+    "levelTitle": "Level 3 — Medium",
+    "question": "Which country gifted the Statue of Liberty to the United States?",
+    "options": [
+      { "key": "A", "text": "Spain", "isCorrect": false },
+      { "key": "B", "text": "France", "isCorrect": true },
+      { "key": "C", "text": "Italy", "isCorrect": false },
+      { "key": "D", "text": "Germany", "isCorrect": false }
+    ],
+    "correctKey": "B",
+    "correctAnswer": "France"
+  },
+  {
+    "id": "Q-127",
+    "level": 3,
+    "levelTitle": "Level 3 — Medium",
+    "question": "What is the hardest natural substance on Earth?",
+    "options": [
+      { "key": "A", "text": "Gold", "isCorrect": false },
+      { "key": "B", "text": "Iron", "isCorrect": false },
+      { "key": "C", "text": "Diamond", "isCorrect": true },
+      { "key": "D", "text": "Quartz", "isCorrect": false }
+    ],
+    "correctKey": "C",
+    "correctAnswer": "Diamond"
+  },
+  {
+    "id": "Q-128",
+    "level": 3,
+    "levelTitle": "Level 3 — Medium",
+    "question": "What is the largest organ in the human body?",
+    "options": [
+      { "key": "A", "text": "Heart", "isCorrect": false },
+      { "key": "B", "text": "Liver", "isCorrect": false },
+      { "key": "C", "text": "Skin", "isCorrect": true },
+      { "key": "D", "text": "Brain", "isCorrect": false }
+    ],
+    "correctKey": "C",
+    "correctAnswer": "Skin"
+  },
+  {
+    "id": "Q-129",
+    "level": 3,
+    "levelTitle": "Level 3 — Medium",
+    "question": "Which river is traditionally cited as the longest in the world?",
+    "options": [
+      { "key": "A", "text": "Amazon", "isCorrect": false },
+      { "key": "B", "text": "Nile", "isCorrect": true },
+      { "key": "C", "text": "Yangtze", "isCorrect": false },
+      { "key": "D", "text": "Mississippi", "isCorrect": false }
+    ],
+    "correctKey": "B",
+    "correctAnswer": "Nile"
+  },
+  {
+    "id": "Q-130",
+    "level": 3,
+    "levelTitle": "Level 3 — Medium",
+    "question": "What is the currency of the United Kingdom?",
+    "options": [
+      { "key": "A", "text": "Euro", "isCorrect": false },
+      { "key": "B", "text": "Dollar", "isCorrect": false },
+      { "key": "C", "text": "Pound Sterling", "isCorrect": true },
+      { "key": "D", "text": "Franc", "isCorrect": false }
+    ],
+    "correctKey": "C",
+    "correctAnswer": "Pound Sterling"
+  },
+  {
+    "id": "Q-131",
+    "level": 4,
+    "levelTitle": "Level 4 — Medium–Hard",
+    "question": "Who is often called the \"Father of Computers\"?",
+    "options": [
+      { "key": "A", "text": "Albert Einstein", "isCorrect": false },
+      { "key": "B", "text": "Charles Babbage", "isCorrect": true },
+      { "key": "C", "text": "Isaac Newton", "isCorrect": false },
+      { "key": "D", "text": "Nikola Tesla", "isCorrect": false }
+    ],
+    "correctKey": "B",
+    "correctAnswer": "Charles Babbage"
+  },
+  {
+    "id": "Q-132",
+    "level": 4,
+    "levelTitle": "Level 4 — Medium–Hard",
+    "question": "Which part of the cell is known as its \"powerhouse\"?",
+    "options": [
+      { "key": "A", "text": "Nucleus", "isCorrect": false },
+      { "key": "B", "text": "Ribosome", "isCorrect": false },
+      { "key": "C", "text": "Mitochondria", "isCorrect": true },
+      { "key": "D", "text": "Golgi Apparatus", "isCorrect": false }
+    ],
+    "correctKey": "C",
+    "correctAnswer": "Mitochondria"
+  },
+  {
+    "id": "Q-133",
+    "level": 4,
+    "levelTitle": "Level 4 — Medium–Hard",
+    "question": "Which country hosted the 2016 Summer Olympics?",
+    "options": [
+      { "key": "A", "text": "China", "isCorrect": false },
+      { "key": "B", "text": "United Kingdom", "isCorrect": false },
+      { "key": "C", "text": "Brazil", "isCorrect": true },
+      { "key": "D", "text": "Japan", "isCorrect": false }
+    ],
+    "correctKey": "C",
+    "correctAnswer": "Brazil"
+  },
+  {
+    "id": "Q-134",
+    "level": 4,
+    "levelTitle": "Level 4 — Medium–Hard",
+    "question": "What is the SI unit of electric current?",
+    "options": [
+      { "key": "A", "text": "Volt", "isCorrect": false },
+      { "key": "B", "text": "Watt", "isCorrect": false },
+      { "key": "C", "text": "Ampere", "isCorrect": true },
+      { "key": "D", "text": "Ohm", "isCorrect": false }
+    ],
+    "correctKey": "C",
+    "correctAnswer": "Ampere"
+  },
+  {
+    "id": "Q-135",
+    "level": 4,
+    "levelTitle": "Level 4 — Medium–Hard",
+    "question": "Which ancient civilization built the pyramids of Giza?",
+    "options": [
+      { "key": "A", "text": "Romans", "isCorrect": false },
+      { "key": "B", "text": "Greeks", "isCorrect": false },
+      { "key": "C", "text": "Egyptians", "isCorrect": true },
+      { "key": "D", "text": "Mayans", "isCorrect": false }
+    ],
+    "correctKey": "C",
+    "correctAnswer": "Egyptians"
+  },
+  {
+    "id": "Q-136",
+    "level": 4,
+    "levelTitle": "Level 4 — Medium–Hard",
+    "question": "What does \"HTTP\" stand for?",
+    "options": [
+      { "key": "A", "text": "HyperText Transfer Protocol", "isCorrect": true },
+      { "key": "B", "text": "High Transfer Text Protocol", "isCorrect": false },
+      { "key": "C", "text": "HyperText Transmission Process", "isCorrect": false },
+      { "key": "D", "text": "Home Tool Transfer Protocol", "isCorrect": false }
+    ],
+    "correctKey": "A",
+    "correctAnswer": "HyperText Transfer Protocol"
+  },
+  {
+    "id": "Q-137",
+    "level": 4,
+    "levelTitle": "Level 4 — Medium–Hard",
+    "question": "Which element has the chemical symbol \"Na\"?",
+    "options": [
+      { "key": "A", "text": "Nitrogen", "isCorrect": false },
+      { "key": "B", "text": "Sodium", "isCorrect": true },
+      { "key": "C", "text": "Nickel", "isCorrect": false },
+      { "key": "D", "text": "Neon", "isCorrect": false }
+    ],
+    "correctKey": "B",
+    "correctAnswer": "Sodium"
+  },
+  {
+    "id": "Q-138",
+    "level": 4,
+    "levelTitle": "Level 4 — Medium–Hard",
+    "question": "Who developed the theory of relativity?",
+    "options": [
+      { "key": "A", "text": "Isaac Newton", "isCorrect": false },
+      { "key": "B", "text": "Albert Einstein", "isCorrect": true },
+      { "key": "C", "text": "Niels Bohr", "isCorrect": false },
+      { "key": "D", "text": "Galileo Galilei", "isCorrect": false }
+    ],
+    "correctKey": "B",
+    "correctAnswer": "Albert Einstein"
+  },
+  {
+    "id": "Q-139",
+    "level": 4,
+    "levelTitle": "Level 4 — Medium–Hard",
+    "question": "Which country is known as the \"Land of the Rising Sun\"?",
+    "options": [
+      { "key": "A", "text": "China", "isCorrect": false },
+      { "key": "B", "text": "South Korea", "isCorrect": false },
+      { "key": "C", "text": "Japan", "isCorrect": true },
+      { "key": "D", "text": "Thailand", "isCorrect": false }
+    ],
+    "correctKey": "C",
+    "correctAnswer": "Japan"
+  },
+  {
+    "id": "Q-140",
+    "level": 4,
+    "levelTitle": "Level 4 — Medium–Hard",
+    "question": "What is the scientific study of earthquakes called?",
+    "options": [
+      { "key": "A", "text": "Geology", "isCorrect": false },
+      { "key": "B", "text": "Seismology", "isCorrect": true },
+      { "key": "C", "text": "Meteorology", "isCorrect": false },
+      { "key": "D", "text": "Volcanology", "isCorrect": false }
+    ],
+    "correctKey": "B",
+    "correctAnswer": "Seismology"
+  },
+  {
+    "id": "Q-141",
+    "level": 5,
+    "levelTitle": "Level 5 — Hard",
+    "question": "Which programming language is primarily used with the Web Speech API?",
+    "options": [
+      { "key": "A", "text": "Python", "isCorrect": false },
+      { "key": "B", "text": "JavaScript", "isCorrect": true },
+      { "key": "C", "text": "Java", "isCorrect": false },
+      { "key": "D", "text": "C++", "isCorrect": false }
+    ],
+    "correctKey": "B",
+    "correctAnswer": "JavaScript"
+  },
+  {
+    "id": "Q-142",
+    "level": 5,
+    "levelTitle": "Level 5 — Hard",
+    "question": "What does \"WCAG\" stand for?",
+    "options": [
+      { "key": "A", "text": "Web Content Accessibility Guidelines", "isCorrect": true },
+      { "key": "B", "text": "World Computer Access Group", "isCorrect": false },
+      { "key": "C", "text": "Web Compliance and Grading", "isCorrect": false },
+      { "key": "D", "text": "Website Content Analysis Guide", "isCorrect": false }
+    ],
+    "correctKey": "A",
+    "correctAnswer": "Web Content Accessibility Guidelines"
+  },
+  {
+    "id": "Q-143",
+    "level": 5,
+    "levelTitle": "Level 5 — Hard",
+    "question": "In which year was the United Nations founded?",
+    "options": [
+      { "key": "A", "text": "1918", "isCorrect": false },
+      { "key": "B", "text": "1945", "isCorrect": true },
+      { "key": "C", "text": "1955", "isCorrect": false },
+      { "key": "D", "text": "1962", "isCorrect": false }
+    ],
+    "correctKey": "B",
+    "correctAnswer": "1945"
+  },
+  {
+    "id": "Q-144",
+    "level": 5,
+    "levelTitle": "Level 5 — Hard",
+    "question": "What is the term for a word that reads the same forwards and backwards?",
+    "options": [
+      { "key": "A", "text": "Synonym", "isCorrect": false },
+      { "key": "B", "text": "Palindrome", "isCorrect": true },
+      { "key": "C", "text": "Acronym", "isCorrect": false },
+      { "key": "D", "text": "Homograph", "isCorrect": false }
+    ],
+    "correctKey": "B",
+    "correctAnswer": "Palindrome"
+  },
+  {
+    "id": "Q-145",
+    "level": 5,
+    "levelTitle": "Level 5 — Hard",
+    "question": "Which scientist proposed the three laws of motion?",
+    "options": [
+      { "key": "A", "text": "Albert Einstein", "isCorrect": false },
+      { "key": "B", "text": "Isaac Newton", "isCorrect": true },
+      { "key": "C", "text": "Galileo Galilei", "isCorrect": false },
+      { "key": "D", "text": "Johannes Kepler", "isCorrect": false }
+    ],
+    "correctKey": "B",
+    "correctAnswer": "Isaac Newton"
+  },
+  {
+    "id": "Q-146",
+    "level": 5,
+    "levelTitle": "Level 5 — Hard",
+    "question": "What is the term for a government where power is exercised through elected representatives?",
+    "options": [
+      { "key": "A", "text": "Monarchy", "isCorrect": false },
+      { "key": "B", "text": "Democracy", "isCorrect": true },
+      { "key": "C", "text": "Autocracy", "isCorrect": false },
+      { "key": "D", "text": "Oligarchy", "isCorrect": false }
+    ],
+    "correctKey": "B",
+    "correctAnswer": "Democracy"
+  },
+  {
+    "id": "Q-147",
+    "level": 5,
+    "levelTitle": "Level 5 — Hard",
+    "question": "Which gas makes up the majority of Earth's atmosphere?",
+    "options": [
+      { "key": "A", "text": "Oxygen", "isCorrect": false },
+      { "key": "B", "text": "Carbon Dioxide", "isCorrect": false },
+      { "key": "C", "text": "Nitrogen", "isCorrect": true },
+      { "key": "D", "text": "Hydrogen", "isCorrect": false }
+    ],
+    "correctKey": "C",
+    "correctAnswer": "Nitrogen"
+  },
+  {
+    "id": "Q-148",
+    "level": 5,
+    "levelTitle": "Level 5 — Hard",
+    "question": "What is the capital of Australia?",
+    "options": [
+      { "key": "A", "text": "Sydney", "isCorrect": false },
+      { "key": "B", "text": "Melbourne", "isCorrect": false },
+      { "key": "C", "text": "Canberra", "isCorrect": true },
+      { "key": "D", "text": "Perth", "isCorrect": false }
+    ],
+    "correctKey": "C",
+    "correctAnswer": "Canberra"
+  },
+  {
+    "id": "Q-149",
+    "level": 5,
+    "levelTitle": "Level 5 — Hard",
+    "question": "Which data structure follows a \"First In, First Out\" (FIFO) principle?",
+    "options": [
+      { "key": "A", "text": "Stack", "isCorrect": false },
+      { "key": "B", "text": "Queue", "isCorrect": true },
+      { "key": "C", "text": "Tree", "isCorrect": false },
+      { "key": "D", "text": "Graph", "isCorrect": false }
+    ],
+    "correctKey": "B",
+    "correctAnswer": "Queue"
+  },
+  {
+    "id": "Q-150",
+    "level": 5,
+    "levelTitle": "Level 5 — Hard",
+    "question": "In database design, what does \"PK\" typically stand for?",
+    "options": [
+      { "key": "A", "text": "Public Key", "isCorrect": false },
+      { "key": "B", "text": "Primary Key", "isCorrect": true },
+      { "key": "C", "text": "Password Key", "isCorrect": false },
+      { "key": "D", "text": "Partition Key", "isCorrect": false }
+    ],
+    "correctKey": "B",
+    "correctAnswer": "Primary Key"
+  }
+]
