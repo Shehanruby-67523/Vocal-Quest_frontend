@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LogoBrand from '../assets/logo_brand.png';
+import { getUserAvatar } from '../utils/userAvatar';
 import { 
   Settings, 
   Bell, 
@@ -27,6 +28,15 @@ export default function PlayerJourney() {
   const navigate = useNavigate();
   const [progress, setProgress] = useState(0);
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [userAvatarUrl, setUserAvatarUrl] = useState(() => getUserAvatar());
+
+  useEffect(() => {
+    const handleAvatarChange = () => {
+      setUserAvatarUrl(getUserAvatar());
+    };
+    window.addEventListener('vocal_quest_avatar_changed', handleAvatarChange);
+    return () => window.removeEventListener('vocal_quest_avatar_changed', handleAvatarChange);
+  }, []);
   
   // Interactive Modal States
   const [showSettings, setShowSettings] = useState(false);
@@ -160,24 +170,18 @@ export default function PlayerJourney() {
           {/* Profile Picture */}
           <button 
             onClick={() => navigate('/profile')}
-            className="w-10 h-10 rounded-full overflow-hidden border border-[#EFB034] hover:border-yellow-300 transition-all duration-200 bg-slate-800 p-0.5"
+            className="w-10 h-10 rounded-full overflow-hidden border border-[#EFB034] hover:border-yellow-300 transition-all duration-200 bg-slate-800 p-0.5 cursor-pointer"
             aria-label="User Profile"
           >
-            {/* Custom SVG Avatar matching the cartoon user profile from screenshot */}
-            <div className="w-full h-full rounded-full overflow-hidden bg-[#FCE4BD]">
-              <svg viewBox="0 0 100 100" className="w-full h-full">
-                <circle cx="50" cy="50" r="48" fill="#FCE4BD" />
-                <path d="M25 45 C20 55 20 70 25 80 C27 82 73 82 75 80 C80 70 80 55 75 45 Z" fill="#2C2523" />
-                <rect x="44" y="65" width="12" height="15" fill="#E8A67B" />
-                <path d="M30 80 C35 72 40 70 50 70 C60 70 65 72 70 80 L75 100 L25 100 Z" fill="#EFB034" />
-                <path d="M44 70 L50 78 L56 70 Z" fill="#2E6F40" />
-                <circle cx="50" cy="48" r="22" fill="#F7BE94" />
-                <path d="M28 42 C35 30 65 30 72 42 C75 47 75 52 72 55 C70 42 30 42 28 55" fill="#2C2523" />
-                <path d="M28 42 C32 30 50 35 50 40 C50 35 68 30 72 42" fill="#2C2523" />
-                <circle cx="43" cy="46" r="2" fill="#2C2523" />
-                <circle cx="57" cy="46" r="2" fill="#2C2523" />
-                <path d="M45 54 Q50 58 55 54" fill="none" stroke="#2C2523" strokeWidth="1.5" strokeLinecap="round" />
-              </svg>
+            <div className="w-full h-full rounded-full overflow-hidden bg-slate-700">
+              <img
+                src={userAvatarUrl}
+                alt="User Profile"
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.target.src = getUserAvatar();
+                }}
+              />
             </div>
           </button>
         </div>
@@ -191,21 +195,15 @@ export default function PlayerJourney() {
           {/* Left Block */}
           <div className="flex items-center gap-4">
             {/* Avatar container */}
-            <div className="w-16 h-16 rounded-xl overflow-hidden bg-[#FFF8EB] border border-slate-700 shadow-md flex-shrink-0">
-              {/* Male Hero Cartoon Profile SVG */}
-              <svg viewBox="0 0 100 100" className="w-full h-full">
-                <rect x="0" y="0" width="100" height="100" rx="16" fill="#FFF8EB" />
-                <path d="M30 45 C25 50 25 70 30 75 C32 77 68 77 70 75 C75 70 75 50 70 45 Z" fill="#6A4E3D" />
-                <rect x="45" y="65" width="10" height="12" fill="#F3D3B8" />
-                <path d="M25 78 C30 72 35 70 50 70 C65 70 70 72 75 78 L80 100 L20 100 Z" fill="#2C6B6F" />
-                <path d="M40 70 L50 80 L60 70 Z" fill="#FFFFFF" />
-                <circle cx="50" cy="48" r="20" fill="#FCDDC3" />
-                <path d="M30 40 C35 28 65 28 70 40 C72 44 72 48 70 50 C68 38 32 38 30 50" fill="#6A4E3D" />
-                <path d="M30 40 Q45 32 55 38 Q65 32 70 40" stroke="#6A4E3D" strokeWidth="4" strokeLinecap="round" />
-                <circle cx="43" cy="48" r="2" fill="#6A4E3D" />
-                <circle cx="57" cy="48" r="2" fill="#6A4E3D" />
-                <path d="M46 56 Q50 59 54 56" fill="none" stroke="#6A4E3D" strokeWidth="1.5" strokeLinecap="round" />
-              </svg>
+            <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-800 border border-[#EFB034]/50 shadow-md flex-shrink-0">
+              <img
+                src={userAvatarUrl}
+                alt="Hero Avatar"
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.target.src = getUserAvatar();
+                }}
+              />
             </div>
             
             {/* Campaign Name */}

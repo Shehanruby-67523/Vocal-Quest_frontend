@@ -1,4 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import adminService from '../api/adminService';
+import React, { useState, useEffect, useMemo } from 'react';
+import { getUserAvatar } from '../utils/userAvatar';
 import { 
   Search, 
   Bell, 
@@ -49,10 +51,42 @@ export default function UserManagement() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  // Modal States
-  const [inviteModalOpen, setInviteModalOpen] = useState(false);
-  const [savesModalOpen, setSavesModalOpen] = useState(false);
-  const [historyModalOpen, setHistoryModalOpen] = useState(false);
+  // Avatar state
+  const [userAvatarUrl, setUserAvatarUrl] = useState(() => getUserAvatar());
+
+  useEffect(() => {
+    const handleAvatarChange = () => {
+      setUserAvatarUrl(getUserAvatar());
+    };
+    window.addEventListener('vocal_quest_avatar_changed', handleAvatarChange);
+    return () => window.removeEventListener('vocal_quest_avatar_changed', handleAvatarChange);
+  }, []);
+
+  useEffect(() => {
+    fetchUsersFromBackend();
+  }, [currentPage, searchQuery]);
+
+  async function fetchUsersFromBackend() {
+    try {
+      const res = await adminService.getUsers(currentPage, itemsPerPage, searchQuery);
+      if (res && res.users) {
+        const formatted = res.users.map(u => ({
+          id: u.id || u._id || 'VQ-USER',
+          username: u.username || 'User',
+          email: u.email || '',
+          status: u.status || 'Active',
+          role: u.role || 'Standard',
+          verified: u.verified !== undefined ? u.verified : true,
+          gameSaves: u.gameSaves || 0,
+          lastActive: u.lastActive || 'Recently'
+        }));
+        setUsers(formatted);
+      }
+    } catch (err) {
+      console.warn('Could not fetch users from backend, using current state:', err.message);
+    }
+  }
+
   const [selectedUser, setSelectedUser] = useState(null);
 
   // New User Form State
@@ -283,10 +317,15 @@ export default function UserManagement() {
             {/* Admin Profile */}
             <div 
               onClick={() => navigate('/admin/profile')}
-              className="w-9 h-9 rounded-full border-2 border-gold-400 overflow-hidden bg-[#0A2E52] p-0.5 cursor-pointer hover:scale-105 transition flex items-center justify-center shadow-[0_0_10px_rgba(250,204,21,0.3)]"
+              className="w-9 h-9 rounded-full border-2 border-gold-400 overflow-hidden bg-[#0A2E52] p-0.5 cursor-pointer hover:scale-105 transition shadow-[0_0_10px_rgba(250,204,21,0.3)]"
               title="Admin Profile"
             >
-              <span className="text-xs font-black text-gold-400">SA</span>
+              <img 
+                src={userAvatarUrl} 
+                alt="Admin Profile" 
+                className="w-full h-full object-cover rounded-full" 
+                onError={(e) => { e.target.src = getUserAvatar(); }} 
+              />
             </div>
           </div>
         </div>

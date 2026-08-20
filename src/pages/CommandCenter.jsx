@@ -1,4 +1,7 @@
+import adminService from '../api/adminService';
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getUserAvatar } from '../utils/userAvatar';
 import { 
   Search, 
   Bell, 
@@ -15,9 +18,50 @@ import {
 import AdminSidebar from '../Components/common/AdminSidebar';
 
 export default function CommandCenter() {
+  const navigate = useNavigate();
   const [timeframe, setTimeframe] = useState('Weekly');
   const [searchQuery, setSearchQuery] = useState('');
-  
+  const [dashboardStats, setDashboardStats] = useState(null);
+
+  const [userAvatarUrl, setUserAvatarUrl] = useState(() => getUserAvatar());
+
+  useEffect(() => {
+    const handleAvatarChange = () => {
+      setUserAvatarUrl(getUserAvatar());
+    };
+    window.addEventListener('vocal_quest_avatar_changed', handleAvatarChange);
+    return () => window.removeEventListener('vocal_quest_avatar_changed', handleAvatarChange);
+  }, []);
+
+  useEffect(() => {
+    async function fetchBackendDashboard() {
+      try {
+        const [dashRes, logsRes] = await Promise.all([
+          adminService.getDashboard().catch(() => null),
+          adminService.getAuditLogs().catch(() => null)
+        ]);
+
+        if (dashRes && dashRes.data) {
+          setDashboardStats(dashRes.data);
+        }
+
+        if (Array.isArray(logsRes)) {
+          const apiLogs = logsRes.map(l => ({
+            type: l.event?.includes('FAILED') ? 'WARN' : 'OK',
+            time: new Date(l.createdAt || Date.now()).toLocaleTimeString(),
+            msg: `[${l.username || 'System'}] ${l.event || 'Audit event logged'}`
+          }));
+          if (apiLogs.length > 0) {
+            setLogs(prev => [...apiLogs.slice(0, 5), ...prev]);
+          }
+        }
+      } catch (err) {
+        console.warn('Command center backend fetch error:', err.message);
+      }
+    }
+    fetchBackendDashboard();
+  }, []);
+
   // Terminal logs state with live logging simulation
   const [logs, setLogs] = useState([
     { type: 'OK', time: '14:22:01', msg: 'User session initialized (ID: 4421x)' },
@@ -104,10 +148,15 @@ export default function CommandCenter() {
             {/* Admin Profile Icon */}
             <div 
               onClick={() => navigate('/admin/profile')}
-              className="w-9 h-9 rounded-full border-2 border-gold-400 overflow-hidden bg-[#0A2E52] p-0.5 cursor-pointer hover:scale-105 transition flex items-center justify-center shadow-[0_0_10px_rgba(250,204,21,0.3)]"
+              className="w-9 h-9 rounded-full border-2 border-gold-400 overflow-hidden bg-[#0A2E52] p-0.5 cursor-pointer hover:scale-105 transition shadow-[0_0_10px_rgba(250,204,21,0.3)]"
               title="Admin Profile"
             >
-              <span className="text-xs font-black text-gold-400">SA</span>
+              <img
+                src={userAvatarUrl}
+                alt="Admin Profile"
+                className="w-full h-full object-cover rounded-full"
+                onError={(e) => { e.target.src = getUserAvatar(); }}
+              />
             </div>
           </div>
         </header>

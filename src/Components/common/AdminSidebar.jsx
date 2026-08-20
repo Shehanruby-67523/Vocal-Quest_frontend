@@ -101,19 +101,42 @@ export default function AdminSidebar() {
       {/* Admin User Profile Card & Launch Game Button */}
       <div className="px-4 space-y-3">
         {/* Admin Profile Clickable Badge */}
-        <div 
-          onClick={() => navigate('/admin/profile')}
-          className="p-2.5 bg-[#18233c] hover:bg-[#1f2e4e] border border-[#d9b74f]/30 rounded-xl flex items-center gap-3 cursor-pointer transition group"
-          title="Click to view Admin Profile"
-        >
-          <div className="w-8 h-8 rounded-full bg-[#0A2E52] border border-[#d9b74f] flex items-center justify-center text-xs font-black text-[#d9b74f] shrink-0 group-hover:scale-105 transition">
-            SA
-          </div>
-          <div className="flex flex-col min-w-0">
-            <span className="text-xs font-bold text-white truncate">Sajani (Admin)</span>
-            <span className="text-[10px] text-[#d9b74f] font-mono font-semibold">SUPER ADMIN</span>
-          </div>
-        </div>
+        {(() => {
+          let adminName = 'Admin';
+          let avatarUrl = '';
+          try {
+            const perm = localStorage.getItem('vocal_quest_avatar_permanent');
+            if (perm) avatarUrl = perm;
+
+            const stored = localStorage.getItem('vocal_quest_user');
+            if (stored) {
+              const u = JSON.parse(stored);
+              const nameStr = u.name || u.username || (u.email ? u.email.split('@')[0] : 'Admin');
+              adminName = nameStr;
+              if (!avatarUrl && u.avatar) avatarUrl = u.avatar;
+            }
+          } catch (e) {}
+
+          if (!avatarUrl) {
+            avatarUrl = `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(adminName)}`;
+          }
+
+          return (
+            <div 
+              onClick={() => navigate('/admin/profile')}
+              className="p-2.5 bg-[#18233c] hover:bg-[#1f2e4e] border border-[#d9b74f]/30 rounded-xl flex items-center gap-3 cursor-pointer transition group"
+              title="Click to view Admin Profile"
+            >
+              <div className="w-8 h-8 rounded-full border border-[#d9b74f] overflow-hidden bg-[#0A2E52] shrink-0 group-hover:scale-105 transition">
+                <img src={avatarUrl} alt={adminName} className="w-full h-full object-cover" />
+              </div>
+              <div className="flex flex-col min-w-0">
+                <span className="text-xs font-bold text-white truncate">{adminName} (Admin)</span>
+                <span className="text-[10px] text-[#d9b74f] font-mono font-semibold">SUPER ADMIN</span>
+              </div>
+            </div>
+          );
+        })()}
 
         <button
           onClick={() => navigate('/whispering-woods')}

@@ -3,26 +3,46 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Lightbulb, Flag, Check, X, Trophy, ArrowRight, RotateCcw } from 'lucide-react'
 import Logo from '../Components/Logo'
 import { useSpeechSynthesis } from '../hooks/useSpeechSynthesis'
-import rawQuizQuestions from '../data/quizQuestions.json'
 
-// Map 50 General Knowledge Questions for Demon Guardian Barrier
-const THEMES = ['green', 'red', 'blue', 'yellow']
-const LABELS = ['SELECT A', 'SELECT B', 'SELECT C', 'SELECT D']
-
-const QUESTIONS = rawQuizQuestions.map(q => ({
-  id: q.id,
-  question: q.question,
-  stage: `GATEKEEPER'S QUIZ • ${q.levelTitle.toUpperCase()}`,
-  points: 1,
-  hint: `Consider all choices carefully, then speak your selected option clearly.`,
-  options: q.options.map((opt, idx) => ({
-    key: opt.key,
-    label: LABELS[idx] || `SELECT ${opt.key}`,
-    text: opt.text,
-    isCorrect: opt.isCorrect,
-    theme: THEMES[idx] || 'blue'
-  }))
-}))
+// Game Questions conforming to the Gatekeeper's Challenge Quiz
+const QUESTIONS = [
+  {
+    question: "What is the true name of the silent flame?",
+    stage: "GATEKEEPER'S QUIZ • STAGE IV",
+    points: 8,
+    hint: "In the tongue of the old world, the flame is 'Ignis' and silence is 'Tacitus'. Connect the two words.",
+    options: [
+      { key: 'A', label: 'SELECT A', text: 'Ignis Tacitus', isCorrect: true, theme: 'green' },
+      { key: 'B', label: 'SELECT B', text: 'Flamina Rubra', isCorrect: false, theme: 'red' },
+      { key: 'C', label: 'SELECT C', text: 'Aetheris Silentium', isCorrect: false, theme: 'blue' },
+      { key: 'D', label: 'SELECT D', text: 'Sol Invictus', isCorrect: false, theme: 'yellow' },
+    ]
+  },
+  {
+    question: "Which resonance frequency shatters the crystal shield of the guardian?",
+    stage: "GATEKEEPER'S QUIZ • STAGE V",
+    points: 5,
+    hint: "A standard pitch fork vibrates at A440. The resonant frequency is exactly the octave above.",
+    options: [
+      { key: 'A', label: 'SELECT A', text: '120 Hz Hum', isCorrect: false, theme: 'green' },
+      { key: 'B', label: 'SELECT B', text: '440 Hz Tone', isCorrect: false, theme: 'red' },
+      { key: 'C', label: 'SELECT C', text: '880 Hz Octave', isCorrect: true, theme: 'blue' },
+      { key: 'D', label: 'SELECT D', text: '50 Hz Infrasound', isCorrect: false, theme: 'yellow' },
+    ]
+  },
+  {
+    question: "To bypass the Shadowed Gate, what vocal resonance must you maintain?",
+    stage: "GATEKEEPER'S QUIZ • STAGE VI",
+    points: 5,
+    hint: "The gate rejects airy tones or vocal fry. It demands a centered and stable sound.",
+    options: [
+      { key: 'A', label: 'SELECT A', text: 'Airy Falsetto', isCorrect: false, theme: 'green' },
+      { key: 'B', label: 'SELECT B', text: 'Gravelly Vocal Fry', isCorrect: false, theme: 'red' },
+      { key: 'C', label: 'SELECT C', text: 'Steady Chest Voice', isCorrect: true, theme: 'blue' },
+      { key: 'D', label: 'SELECT D', text: 'Guttural Growl', isCorrect: false, theme: 'yellow' },
+    ]
+  }
+]
 
 const hasSpeechSupport = typeof window !== 'undefined' && !!(window.SpeechRecognition || window.webkitSpeechRecognition)
 
@@ -33,7 +53,7 @@ function DemonGuardian() {
   const [encounterState, setEncounterState] = useState('QUIZ')
 
   // Quiz & standing states
-  const [score, setScore] = useState(0) // Starts at 0/50
+  const [score, setScore] = useState(32) // Starts at 32/50 as shown in Figma screenshot
   const [currentIdx, setCurrentIdx] = useState(0)
   const [selectedKey, setSelectedKey] = useState(null)
   const [isAnswered, setIsAnswered] = useState(false)
@@ -191,7 +211,7 @@ function DemonGuardian() {
   const handleReset = () => {
     lastSpokenKeyRef.current = ''
     setEncounterState('QUIZ')
-    setScore(0)
+    setScore(32)
     setCurrentIdx(0)
     setSelectedKey(null)
     setIsAnswered(false)
@@ -203,14 +223,10 @@ function DemonGuardian() {
 
   // Voice Command routing
   const handleVoiceCommand = (transcript) => {
-    // DO NOT PROCESS IF ALREADY ANSWERED OR SYSTEM NARRATION IS SPEAKING OR IN COOLDOWN
+    // DO NOT PROCESS IF ALREADY ANSWERED OR SYSTEM NARRATION IS SPEAKING
     if (stateRef.current.isAnswered) return
-    if (isSpeakingTTSRef.current || (typeof window !== 'undefined' && window.speechSynthesis && window.speechSynthesis.speaking)) {
+    if (isSpeakingTTSRef.current) {
       console.log("Ignored microphone input because Text-to-Speech narration is speaking.")
-      return
-    }
-    if (Date.now() < speechCooldownUntilRef.current) {
-      console.log("Ignored microphone input during post-narration cooldown.")
       return
     }
 
@@ -258,60 +274,56 @@ function DemonGuardian() {
     if (curState === 'QUIZ') {
       const currentOptList = QUESTIONS[stateRef.current.currentIdx]?.options || []
 
-      const optAText = currentOptList[0]?.text || ''
-      const optBText = currentOptList[1]?.text || ''
-      const optCText = currentOptList[2]?.text || ''
-      const optDText = currentOptList[3]?.text || ''
+      const optAText = currentOptList[0]?.text?.toLowerCase() || ''
+      const optBText = currentOptList[1]?.text?.toLowerCase() || ''
+      const optCText = currentOptList[2]?.text?.toLowerCase() || ''
+      const optDText = currentOptList[3]?.text?.toLowerCase() || ''
 
-      // Clean text helper for matching words without special symbols
-      const cleanOptionText = (text) => text.toLowerCase().replace(/°c/g, ' degrees celsius').replace(/[.,#!?°]/g, '').trim()
-
-      const optA = cleanOptionText(optAText)
-      const optB = cleanOptionText(optBText)
-      const optC = cleanOptionText(optCText)
-      const optD = cleanOptionText(optDText)
-
-      // Check if spoken phrase matches option text cleanly
-      const isTextMatch = (optStr) => {
-        if (!optStr || optStr.length < 2) return false
-        return cleanTranscript === optStr || cleanTranscript.includes(optStr)
+      const isTextMatch = (textStr) => {
+        if (!textStr) return false
+        const words = textStr.split(/\s+/)
+        return cleanTranscript.includes(textStr) || words.some(w => w.length > 2 && cleanTranscript.includes(w))
       }
 
-      // Option A Triggers (Excluded standalone "a" to prevent false triggers e.g. "a spring"):
+      // Option A Triggers ("Option A", "Select A", "Alpha", or option text words)
       const matchA =
-        cleanTranscript === 'option a' ||
-        cleanTranscript === 'select a' ||
-        cleanTranscript === 'choice a' ||
-        cleanTranscript === 'answer a' ||
-        cleanTranscript === 'alpha' ||
-        isTextMatch(optA)
+        cleanTranscript === 'a' ||
+        cleanTranscript.includes('option a') ||
+        cleanTranscript.includes('select a') ||
+        cleanTranscript.includes('choice a') ||
+        cleanTranscript.includes('answer a') ||
+        cleanTranscript.includes('alpha') ||
+        isTextMatch(optAText)
 
-      // Option B Triggers:
+      // Option B Triggers ("Option B", "Select B", "Bravo", or option text words)
       const matchB =
-        cleanTranscript === 'option b' ||
-        cleanTranscript === 'select b' ||
-        cleanTranscript === 'choice b' ||
-        cleanTranscript === 'answer b' ||
-        cleanTranscript === 'bravo' ||
-        isTextMatch(optB)
+        cleanTranscript === 'b' ||
+        cleanTranscript.includes('option b') ||
+        cleanTranscript.includes('select b') ||
+        cleanTranscript.includes('choice b') ||
+        cleanTranscript.includes('answer b') ||
+        cleanTranscript.includes('bravo') ||
+        isTextMatch(optBText)
 
-      // Option C Triggers:
+      // Option C Triggers ("Option C", "Select C", "Charlie", or option text words)
       const matchC =
-        cleanTranscript === 'option c' ||
-        cleanTranscript === 'select c' ||
-        cleanTranscript === 'choice c' ||
-        cleanTranscript === 'answer c' ||
-        cleanTranscript === 'charlie' ||
-        isTextMatch(optC)
+        cleanTranscript === 'c' ||
+        cleanTranscript.includes('option c') ||
+        cleanTranscript.includes('select c') ||
+        cleanTranscript.includes('choice c') ||
+        cleanTranscript.includes('answer c') ||
+        cleanTranscript.includes('charlie') ||
+        isTextMatch(optCText)
 
-      // Option D Triggers:
+      // Option D Triggers ("Option D", "Select D", "Delta", or option text words)
       const matchD =
-        cleanTranscript === 'option d' ||
-        cleanTranscript === 'select d' ||
-        cleanTranscript === 'choice d' ||
-        cleanTranscript === 'answer d' ||
-        cleanTranscript === 'delta' ||
-        isTextMatch(optD)
+        cleanTranscript === 'd' ||
+        cleanTranscript.includes('option d') ||
+        cleanTranscript.includes('select d') ||
+        cleanTranscript.includes('choice d') ||
+        cleanTranscript.includes('answer d') ||
+        cleanTranscript.includes('delta') ||
+        isTextMatch(optDText)
 
       if (matchA) {
         setSpeechFeedback(`Heard voice command: "${cleanTranscript}"`)
@@ -369,13 +381,14 @@ function DemonGuardian() {
 
     rec.onresult = (event) => {
       if (!active) return
-      let currentResult = ''
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        currentResult += event.results[i][0].transcript
+      let fullTranscript = ''
+      for (let i = 0; i < event.results.length; i++) {
+        fullTranscript += ' ' + event.results[i][0].transcript
       }
-      const transcript = currentResult.trim()
+      const transcript = fullTranscript.trim()
       if (!transcript) return
       console.log('Voice Input Heard (raw):', transcript)
+      setSpeechFeedback(`Mic Heard: "${transcript}"`)
       if (voiceHandlerRef.current) {
         voiceHandlerRef.current(transcript)
       }

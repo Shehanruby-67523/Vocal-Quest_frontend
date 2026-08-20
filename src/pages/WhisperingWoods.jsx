@@ -1,16 +1,25 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useVoiceCommands } from '../hooks/useVoiceCommands'
 import { useSpeechSynthesis } from '../hooks/useSpeechSynthesis'
-import { useMemo } from 'react'
+import { getUserAvatar } from '../utils/userAvatar'
 
 function WhisperingWoods() {
   const navigate = useNavigate()
   const [isMuted, setIsMuted] = useState(false)
+  const [userAvatarUrl, setUserAvatarUrl] = useState(() => getUserAvatar())
   const [recognizedCommand, setRecognizedCommand] = useState('Choice One')
   const [narrationText, setNarrationText] = useState(
     'Ancient branches creak above you. The forest awaits your command. Speak clearly to the spirits within the mist.'
   )
+
+  useEffect(() => {
+    const handleAvatarChange = () => {
+      setUserAvatarUrl(getUserAvatar())
+    }
+    window.addEventListener('vocal_quest_avatar_changed', handleAvatarChange)
+    return () => window.removeEventListener('vocal_quest_avatar_changed', handleAvatarChange)
+  }, [])
   const [activeTab, setActiveTab] = useState('RESULTS') // Matches the mockup's yellow active tab
   const [activeBuffs, setActiveBuffs] = useState({ buff1: true, buff2: true })
 
@@ -198,11 +207,11 @@ function WhisperingWoods() {
             <Link to="/profile" className="relative group cursor-pointer" title="View Profile">
               <div className="w-8 h-8 rounded-full border border-slate-500/40 overflow-hidden bg-slate-800 group-hover:border-gold-300 transition-colors">
                 <img
-                  src="/user_avatar.jpg"
+                  src={userAvatarUrl}
                   alt="User Avatar"
                   className="w-full h-full object-cover"
                   onError={(e) => {
-                    e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80";
+                    e.target.src = getUserAvatar();
                   }}
                 />
               </div>

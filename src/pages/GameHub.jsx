@@ -33,6 +33,20 @@ export default function GameHub() {
     cmd.action.toLowerCase().includes(searchVal.toLowerCase())
   );
 
+  // Load logged-in user display name
+  const getUserName = () => {
+    try {
+      const stored = localStorage.getItem('vocal_quest_user');
+      if (stored) {
+        const u = JSON.parse(stored);
+        return u.name || u.username || (u.email ? u.email.split('@')[0] : 'Questmaster');
+      }
+    } catch (e) {}
+    return 'Questmaster';
+  };
+
+  const userName = getUserName();
+
   return (
     <div className="min-h-screen bg-[#001F3F] text-slate-200 font-sans flex flex-col transition-colors duration-300 relative select-none">
       
@@ -50,7 +64,7 @@ export default function GameHub() {
         {/* Welcome Message Card */}
         <div className="bg-[#0b172a]/60 backdrop-blur border border-slate-800/80 rounded-xl p-8 w-full max-w-2xl shadow-xl transition-all duration-300">
           <h2 className="text-2xl font-bold text-gold-400 mb-3 tracking-wide">
-            Welcome back, Questmaster
+            Welcome back, {userName}
           </h2>
           <p className="text-xs text-slate-400 leading-relaxed font-medium">
             Your vocal journey continues. All systems are calibrated for high-fidelity voice recognition. 

@@ -1,5 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getUserAvatar } from '../utils/userAvatar';
 import {
   Search,
   Plus,
@@ -25,6 +26,16 @@ export default function QuizDatabase() {
   const [selectedDifficulty, setSelectedDifficulty] = useState('All');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState(null);
+
+  const [userAvatarUrl, setUserAvatarUrl] = useState(() => getUserAvatar());
+
+  useEffect(() => {
+    const handleAvatarChange = () => {
+      setUserAvatarUrl(getUserAvatar());
+    };
+    window.addEventListener('vocal_quest_avatar_changed', handleAvatarChange);
+    return () => window.removeEventListener('vocal_quest_avatar_changed', handleAvatarChange);
+  }, []);
 
   // Initial Question Bank State
   const [questions, setQuestions] = useState([
@@ -231,10 +242,15 @@ export default function QuizDatabase() {
             {/* Admin Profile Icon */}
             <div
               onClick={() => navigate('/admin/profile')}
-              className="w-10 h-10 rounded-full border-2 border-[#d9b74f] overflow-hidden bg-[#0A2E52] p-0.5 cursor-pointer hover:scale-105 transition flex items-center justify-center shadow-[0_0_10px_rgba(217,183,79,0.35)]"
+              className="w-10 h-10 rounded-full border-2 border-[#d9b74f] overflow-hidden bg-[#0A2E52] p-0.5 cursor-pointer hover:scale-105 transition shadow-[0_0_10px_rgba(217,183,79,0.35)]"
               title="Admin Profile"
             >
-              <span className="text-xs font-black text-[#d9b74f]">SA</span>
+              <img
+                src={userAvatarUrl}
+                alt="Admin Profile"
+                className="w-full h-full object-cover rounded-full"
+                onError={(e) => { e.target.src = getUserAvatar(); }}
+              />
             </div>
           </div>
         </div>

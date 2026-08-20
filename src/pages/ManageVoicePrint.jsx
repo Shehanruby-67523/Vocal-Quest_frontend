@@ -1,3 +1,4 @@
+import userService from '../api/userService';
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { 
@@ -26,6 +27,20 @@ export default function ManageVoicePrint() {
   const navigate = useNavigate();
   
   // Status states
+  useEffect(() => {
+    async function fetchVoicePrintStatus() {
+      try {
+        const res = await userService.getVoicePrint();
+        if (res && res.data && res.data.status) {
+          setVoicePrintStatus(res.data.status);
+        }
+      } catch (err) {
+        console.warn('Backend voice print fetch error:', err.message);
+      }
+    }
+    fetchVoicePrintStatus();
+  }, []);
+
   const [voicePrintStatus, setVoicePrintStatus] = useState(() => {
     return localStorage.getItem("vocal_quest_voice_print_status") || "active";
   });

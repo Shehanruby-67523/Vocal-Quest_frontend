@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { getUserAvatar } from '../utils/userAvatar';
 import { 
   Volume2, 
   Mic, 
@@ -10,7 +11,9 @@ import {
   Save, 
   CheckCircle2, 
   Sliders, 
-  RotateCcw 
+  RotateCcw,
+  User as UserIcon,
+  Pencil
 } from 'lucide-react';
 import Navbar from '../Components/Navbar';
 import Footer from '../Components/Footer';
@@ -27,6 +30,22 @@ export default function Settings() {
   const [soundWaveAnim, setSoundWaveAnim] = useState(true);
   const [subtitles, setSubtitles] = useState(true);
   const [savedSuccess, setSavedSuccess] = useState(false);
+
+  const [userAvatarUrl, setUserAvatarUrl] = useState(() => getUserAvatar());
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('vocal_quest_user');
+      if (stored) setUserData(JSON.parse(stored));
+    } catch (e) {}
+
+    const handleAvatarChange = () => {
+      setUserAvatarUrl(getUserAvatar());
+    };
+    window.addEventListener('vocal_quest_avatar_changed', handleAvatarChange);
+    return () => window.removeEventListener('vocal_quest_avatar_changed', handleAvatarChange);
+  }, []);
 
   // Set Document Title
   useEffect(() => {
@@ -115,6 +134,38 @@ export default function Settings() {
 
         {/* Settings Sections Grid */}
         <div className="space-y-6">
+
+          {/* SECTION 0: User Profile & Avatar Card */}
+          <section className="bg-[#041628]/60 border border-[#0f3458]/50 rounded-2xl p-6 shadow-xl backdrop-blur-md flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="relative w-16 h-16 rounded-full border-2 border-[#d9b74f] overflow-hidden bg-slate-800 shrink-0 shadow-[0_0_12px_rgba(217,183,79,0.3)]">
+                <img
+                  src={userAvatarUrl}
+                  alt="Profile Avatar"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.src = getUserAvatar();
+                  }}
+                />
+              </div>
+              <div>
+                <h3 className="text-base font-extrabold text-white">
+                  {userData?.name || userData?.username || (userData?.email ? userData.email.split('@')[0] : 'Player')}
+                </h3>
+                <p className="text-xs text-slate-400 font-mono">
+                  {userData?.email || userData?.username || 'player@vocalquest.com'}
+                </p>
+              </div>
+            </div>
+
+            <Link
+              to="/profile"
+              className="px-4 py-2 bg-[#d9b74f]/10 border border-[#d9b74f]/40 hover:bg-[#d9b74f]/20 text-[#d9b74f] text-xs font-bold rounded-xl flex items-center gap-2 transition"
+            >
+              <Pencil size={14} />
+              <span>Change Profile Picture</span>
+            </Link>
+          </section>
 
           {/* SECTION 1: Audio & Voice Controls */}
           <section className="bg-[#041628]/60 border border-[#0f3458]/50 rounded-2xl p-6 shadow-xl backdrop-blur-md">

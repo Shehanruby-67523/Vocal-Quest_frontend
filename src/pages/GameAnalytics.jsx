@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getUserAvatar } from '../utils/userAvatar';
 import { 
   BarChart3, 
   Activity, 
@@ -19,8 +21,19 @@ import {
 import AdminSidebar from '../Components/common/AdminSidebar';
 
 export default function GameAnalytics() {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [showNotifications, setShowNotifications] = useState(false);
+
+  const [userAvatarUrl, setUserAvatarUrl] = useState(() => getUserAvatar());
+
+  useEffect(() => {
+    const handleAvatarChange = () => {
+      setUserAvatarUrl(getUserAvatar());
+    };
+    window.addEventListener('vocal_quest_avatar_changed', handleAvatarChange);
+    return () => window.removeEventListener('vocal_quest_avatar_changed', handleAvatarChange);
+  }, []);
 
   // Daily Speech Accuracy Chart Data (Mon - Sun)
   const chartData = [
@@ -91,10 +104,15 @@ export default function GameAnalytics() {
             {/* Admin Profile Icon */}
             <div 
               onClick={() => navigate('/admin/profile')}
-              className="w-9 h-9 rounded-full border-2 border-[#FACC15] overflow-hidden bg-[#0A2E52] p-0.5 cursor-pointer hover:scale-105 transition flex items-center justify-center shadow-[0_0_10px_rgba(250,204,21,0.3)]"
+              className="w-9 h-9 rounded-full border-2 border-[#FACC15] overflow-hidden bg-[#0A2E52] p-0.5 cursor-pointer hover:scale-105 transition shadow-[0_0_10px_rgba(250,204,21,0.3)]"
               title="Admin Profile"
             >
-              <span className="text-xs font-black text-[#FACC15]">SA</span>
+              <img
+                src={userAvatarUrl}
+                alt="Admin Profile"
+                className="w-full h-full object-cover rounded-full"
+                onError={(e) => { e.target.src = getUserAvatar(); }}
+              />
             </div>
           </div>
         </header>

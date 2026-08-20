@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getUserAvatar } from '../../utils/userAvatar';
 import { 
   Volume2, 
   VolumeX, 
@@ -59,6 +60,16 @@ export default function GlobalNavigation({
   const toggleSound = () => {
     setSoundOn(prev => !prev);
   };
+
+  const [userAvatarUrl, setUserAvatarUrl] = useState(() => getUserAvatar());
+
+  useEffect(() => {
+    const handleAvatarChange = () => {
+      setUserAvatarUrl(getUserAvatar());
+    };
+    window.addEventListener('vocal_quest_avatar_changed', handleAvatarChange);
+    return () => window.removeEventListener('vocal_quest_avatar_changed', handleAvatarChange);
+  }, []);
 
   return (
     <header className="h-16 bg-[#0B263F]/80 border-b border-slate-800/60 flex items-center justify-between px-6 sticky top-0 z-50 backdrop-blur-md select-none transition-colors duration-300">
@@ -165,7 +176,14 @@ export default function GlobalNavigation({
           title="View Profile"
         >
           <div className="w-full h-full rounded-full overflow-hidden bg-slate-700 flex items-center justify-center">
-            <User size={15} className="text-gold-400" />
+            <img 
+              src={userAvatarUrl} 
+              alt="User Profile Avatar" 
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                e.target.src = getUserAvatar();
+              }} 
+            />
           </div>
         </div>
       </div>

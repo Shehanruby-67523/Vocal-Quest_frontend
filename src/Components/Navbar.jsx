@@ -1,12 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Bell, User, Inbox } from "lucide-react";
 import Logo from "./Logo";
 import { colors } from "../styles/colors";
+import { getUserAvatar } from "../utils/userAvatar";
 
 export default function Navbar() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications] = useState([]);
+  const [userAvatarUrl, setUserAvatarUrl] = useState(() => getUserAvatar());
+
+  useEffect(() => {
+    const handleAvatarChange = () => {
+      setUserAvatarUrl(getUserAvatar());
+    };
+    window.addEventListener('vocal_quest_avatar_changed', handleAvatarChange);
+    return () => window.removeEventListener('vocal_quest_avatar_changed', handleAvatarChange);
+  }, []);
 
   const links = [
     { name: "Dashboard", path: "/player-journey" },
@@ -73,11 +83,18 @@ export default function Navbar() {
         {/* User Profile Avatar */}
         <Link
           to="/profile"
-          className="w-9 h-9 rounded-full flex items-center justify-center border-2 overflow-hidden hover:border-white transition"
+          className="w-9 h-9 rounded-full flex items-center justify-center border-2 overflow-hidden hover:border-white transition group cursor-pointer"
           style={{ borderColor: colors.gold, backgroundColor: colors.sidebar }}
           title="View Profile"
         >
-          <User size={16} color="#ffffff" />
+          <img
+            src={userAvatarUrl}
+            alt="User Profile"
+            className="w-full h-full object-cover group-hover:scale-105 transition"
+            onError={(e) => {
+              e.target.src = getUserAvatar();
+            }}
+          />
         </Link>
       </div>
     </header>

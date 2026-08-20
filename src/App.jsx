@@ -1,3 +1,4 @@
+import ResetPassword from './Components/ResetPassword'
 import ProfilePage from "./pages/Profile";
 import ManageVoicePrint from "./pages/ManageVoicePrint";
 import { Navigate, Route, Routes } from 'react-router-dom'
@@ -32,6 +33,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-of-service" element={<TermsOfService />} />
         <Route path="/player-journey" element={<PlayerJourney />} />

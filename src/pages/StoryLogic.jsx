@@ -1,5 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getUserAvatar } from '../utils/userAvatar';
 import { 
   LayoutGrid, 
   Workflow, 
@@ -31,6 +32,15 @@ export default function StoryLogic() {
   const canvasRef = useRef(null);
 
   const [zoomLevel, setZoomLevel] = useState(100);
+  const [userAvatarUrl, setUserAvatarUrl] = useState(() => getUserAvatar());
+
+  useEffect(() => {
+    const handleAvatarChange = () => {
+      setUserAvatarUrl(getUserAvatar());
+    };
+    window.addEventListener('vocal_quest_avatar_changed', handleAvatarChange);
+    return () => window.removeEventListener('vocal_quest_avatar_changed', handleAvatarChange);
+  }, []);
 
   // DRAGGABLE NODES STATE WITH (X, Y) COORDS
   const [nodes, setNodes] = useState([
@@ -207,10 +217,15 @@ export default function StoryLogic() {
             </button>
             <div 
               onClick={() => navigate('/admin/profile')}
-              className="w-9 h-9 rounded-full border-2 border-[#FFD700] overflow-hidden bg-[#0A2E52] p-0.5 cursor-pointer hover:scale-105 transition flex items-center justify-center shadow-[0_0_10px_rgba(255,215,0,0.3)]"
+              className="w-9 h-9 rounded-full border-2 border-[#FFD700] overflow-hidden bg-[#0A2E52] p-0.5 cursor-pointer hover:scale-105 transition shadow-[0_0_10px_rgba(255,215,0,0.3)]"
               title="Admin Profile"
             >
-              <span className="text-xs font-black text-[#FFD700]">SA</span>
+              <img
+                src={userAvatarUrl}
+                alt="Admin Profile"
+                className="w-full h-full object-cover rounded-full"
+                onError={(e) => { e.target.src = getUserAvatar(); }}
+              />
             </div>
           </div>
         </header>

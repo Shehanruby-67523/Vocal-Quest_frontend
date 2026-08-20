@@ -1,3 +1,6 @@
+import { useState, useEffect, useRef } from 'react';
+import userService from '../api/userService';
+import { getUserAvatar, saveUserAvatar } from '../utils/userAvatar';
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
@@ -18,10 +21,84 @@ import {
   Check,
   BarChart2,
   Clock,
-  Award
+  Award,
+  Upload,
+  Image as ImageIcon,
+  X
 } from 'lucide-react';
 
+const PRESET_AVATARS = [
+  { name: 'Vocal Knight', url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Knight' },
+  { name: 'Mystic Mage', url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Mage' },
+  { name: 'Shadow Rogue', url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Rogue' },
+  { name: 'Quest Bot', url: 'https://api.dicebear.com/7.x/bottts/svg?seed=QuestBot' },
+  { name: 'Cyber Hero', url: 'https://api.dicebear.com/7.x/bottts/svg?seed=CyberHero' },
+  { name: 'Dragon Master', url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Dragon' }
+];
+
 export default function Profile() {
+  const [userData, setUserData] = useState(null);
+  const [userStats, setUserStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [avatarToast, setAvatarToast] = useState('');
+  const [showAvatarModal, setShowAvatarModal] = useState(false);
+
+  const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    async function fetchProfileData() {
+      try {
+        const [profileRes, statsRes] = await Promise.all([
+          userService.getProfile().catch(() => null),
+          userService.getStats().catch(() => null)
+        ]);
+        if (profileRes && profileRes.data?.user) {
+          setUserData(profileRes.data.user);
+        } else {
+          const cached = localStorage.getItem('vocal_quest_user');
+          if (cached) setUserData(JSON.parse(cached));
+        }
+        if (statsRes && statsRes.data) {
+          setUserStats(statsRes.data);
+        }
+      } catch (err) {
+        console.error('Failed to load profile data:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProfileData();
+  }, []);
+
+  const saveAvatar = (newAvatarUrl) => {
+    const updatedUser = { ...userData, avatar: newAvatarUrl };
+    setUserData(updatedUser);
+    saveUserAvatar(newAvatarUrl);
+
+    userService.updateProfile({ avatar: newAvatarUrl }).catch(() => null);
+
+    setAvatarToast('Profile picture updated successfully!');
+    setShowAvatarModal(false);
+    setTimeout(() => setAvatarToast(''), 3000);
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image size should be less than 5MB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (reader.result) {
+        saveAvatar(reader.result);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
   const navigate = useNavigate();
 
   return (
@@ -144,21 +221,38 @@ export default function Profile() {
         <section className="bg-[#0B2239] border border-slate-800 rounded-3xl p-6 lg:p-8 shadow-xl space-y-6">
           <div className="flex flex-col sm:flex-row items-center gap-6">
             
+            {/* Hidden File Input for Device Image Upload */}
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              accept="image/*" 
+              className="hidden" 
+              onChange={handleImageUpload} 
+            />
+
             {/* Avatar with Gold Edit Pencil Badge */}
-            <div className="relative group cursor-pointer">
+            <div 
+              onClick={() => setShowAvatarModal(true)}
+              className="relative group cursor-pointer"
+              title="Click to Change Profile Picture"
+            >
               <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-2 border-[#d9b74f] overflow-hidden bg-slate-800 shadow-[0_0_15px_rgba(217,183,79,0.3)]">
                 <img
-                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80"
-                  alt="Sajani Profile"
+                  src={getUserAvatar(userData)}
+                  alt="Profile Avatar"
                   className="w-full h-full object-cover transition-transform group-hover:scale-105"
                   onError={(e) => {
-                    e.target.src = "/user_avatar.jpg";
+                    e.target.src = `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(userData?.name || 'Player')}`;
                   }}
                 />
               </div>
               <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowAvatarModal(true);
+                }}
                 className="absolute bottom-0 right-0 p-2 bg-[#d9b74f] hover:bg-amber-400 text-[#031220] rounded-full shadow-lg transition cursor-pointer"
-                title="Edit Avatar"
+                title="Change Profile Picture"
               >
                 <Pencil size={14} strokeWidth={3} />
               </button>
@@ -167,7 +261,9 @@ export default function Profile() {
             {/* User Info & XP Details */}
             <div className="flex-1 text-center sm:text-left space-y-3 w-full">
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
-                <h2 className="text-2xl font-extrabold text-white">Sajani</h2>
+                <h2 className="text-2xl font-extrabold text-white">
+                  {userData?.name || userData?.username || (userData?.email ? userData.email.split('@')[0] : 'Explorer')}
+                </h2>
                 <span className="px-3 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-bold rounded-full">
                   Level 5 Explorer
                 </span>
@@ -175,6 +271,9 @@ export default function Profile() {
                   Lv.5
                 </span>
               </div>
+              <p className="text-xs text-slate-400 font-mono">
+                {userData?.email || userData?.username || 'player@vocalquest.com'}
+              </p>
 
               {/* XP Progress Bar */}
               <div className="space-y-1.5 max-w-lg">
@@ -407,6 +506,77 @@ export default function Profile() {
         </footer>
 
       </main>
+
+      {/* AVATAR CHOOSER & UPLOAD MODAL */}
+      {showAvatarModal && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-[#0B2239] border border-amber-500/30 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative space-y-6">
+            
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-amber-500/10 rounded-xl text-amber-400">
+                  <ImageIcon size={20} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">Change Profile Picture</h3>
+                  <p className="text-xs text-slate-400">Upload a custom photo or choose a quest avatar</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowAvatarModal(false)}
+                className="p-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-slate-400 hover:text-white transition cursor-pointer"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Upload Custom Photo Button */}
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full py-4 px-6 bg-gradient-to-r from-amber-500 to-[#d9b74f] hover:from-amber-400 hover:to-amber-500 text-[#031220] font-extrabold rounded-2xl shadow-lg flex items-center justify-center gap-3 transition cursor-pointer"
+            >
+              <Upload size={20} strokeWidth={2.5} />
+              <span>Upload Photo from Device</span>
+            </button>
+
+            {/* Divider */}
+            <div className="flex items-center gap-4 text-xs text-slate-500 uppercase tracking-widest font-mono">
+              <div className="h-[1px] bg-slate-800 flex-1" />
+              <span>or choose preset avatar</span>
+              <div className="h-[1px] bg-slate-800 flex-1" />
+            </div>
+
+            {/* Preset Avatars Grid */}
+            <div className="grid grid-cols-3 gap-4">
+              {PRESET_AVATARS.map((avatar, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => saveAvatar(avatar.url)}
+                  className="p-3 bg-[#05172A] hover:bg-[#0A2E52] border border-slate-800 hover:border-amber-500/50 rounded-2xl flex flex-col items-center gap-2 group transition cursor-pointer"
+                >
+                  <div className="w-14 h-14 rounded-full overflow-hidden border border-amber-500/30 group-hover:scale-110 transition">
+                    <img src={avatar.url} alt={avatar.name} className="w-full h-full object-cover" />
+                  </div>
+                  <span className="text-[11px] font-bold text-slate-300 group-hover:text-amber-300 truncate w-full text-center">
+                    {avatar.name}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* TOAST FEEDBACK BANNER */}
+      {avatarToast && (
+        <div className="fixed bottom-6 right-6 z-50 bg-emerald-600 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3 animate-bounce font-bold text-xs">
+          <Check size={18} />
+          <span>{avatarToast}</span>
+        </div>
+      )}
+
     </div>
   );
 }

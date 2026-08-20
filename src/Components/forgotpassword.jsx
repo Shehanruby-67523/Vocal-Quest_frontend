@@ -1,13 +1,36 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import authService from '../api/authService';
 import './forgotpassword.css';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [resetUrl, setResetUrl] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Reset link requested for:', email);
+    setMessage('');
+    setResetUrl('');
+    setIsError(false);
+    setLoading(true);
+
+    try {
+      const res = await authService.forgotPassword(email);
+      console.log('Forgot password API response:', res);
+      setMessage(res.message || 'Reset link generated successfully.');
+      if (res.resetUrl || res.resetToken) {
+        setResetUrl(res.resetUrl || `/reset-password?token=${res.resetToken}`);
+      }
+    } catch (err) {
+      console.error('Forgot password error:', err);
+      setIsError(true);
+      setMessage(err.message || 'Failed to request password reset. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -30,9 +53,24 @@ const ForgotPassword = () => {
           <div className="card-header">
             <h2>Forgot Password?</h2>
             <p className="subtitle">
-              Enter your email, then you can get <br /> reset email link
+              Enter your registered email to receive your password reset link
             </p>
           </div>
+
+          {message && (
+            <div className={`p-3 mb-4 text-sm rounded-lg text-center border ${isError ? 'bg-red-900/40 text-red-300 border-red-500/50' : 'bg-emerald-900/40 text-emerald-300 border-emerald-500/50'}`}>
+              {message}
+            </div>
+          )}
+
+          {resetUrl && (
+            <div className="p-3 mb-4 bg-amber-950/60 border border-amber-500/50 rounded-lg text-center text-xs text-amber-200">
+              <p className="font-semibold mb-1">🔗 Direct Password Reset Link:</p>
+              <Link to={resetUrl} className="underline text-amber-300 hover:text-amber-100 break-all font-mono">
+                Click here to reset your password
+              </Link>
+            </div>
+          )}
 
           <form className="forgot-form" onSubmit={handleSubmit}>
             <div className="input-group">
@@ -46,7 +84,9 @@ const ForgotPassword = () => {
                 required
               />
             </div>
-            <button type="submit" className="send-btn">Send</button>
+            <button type="submit" className="send-btn" disabled={loading}>
+              {loading ? 'Sending...' : 'Send Reset Link'}
+            </button>
           </form>
 
           <div className="back-to-login">
@@ -69,7 +109,7 @@ const ForgotPassword = () => {
               />
             </div>
             <p className="footer-description">
-              “Enhance your speaking and learning through interactive quizzes.”
+              Enhance your speaking and learning through interactive quizzes.
             </p>
           </div>
 
