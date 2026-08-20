@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getUserAvatar } from '../utils/userAvatar';
+import { apiRequest } from '../api/apiClient';
 import {
   Search,
   Plus,
@@ -35,6 +36,39 @@ export default function QuizDatabase() {
     };
     window.addEventListener('vocal_quest_avatar_changed', handleAvatarChange);
     return () => window.removeEventListener('vocal_quest_avatar_changed', handleAvatarChange);
+  }, []);
+
+  // Fetch questions from Neon PostgreSQL API (Step 5)
+  useEffect(() => {
+    async function loadCloudDatabase() {
+      try {
+        let data = null;
+        try {
+          data = await apiRequest('/quiz/questions');
+        } catch (e) {
+          const response = await fetch('http://localhost:5000/api/quiz/questions');
+          data = await response.json();
+        }
+
+        if (data && data.success && Array.isArray(data.questions) && data.questions.length > 0) {
+          const formatted = data.questions.map((q, idx) => ({
+            id: q.key || `Q-${100 + idx}`,
+            question: q.question,
+            level: q.storyNode || 'Whispering Woods',
+            category: 'Voice Calibration',
+            difficulty: 'Medium',
+            correctAnswer: q.correctAnswer,
+            options: [q.optionA, q.optionB, q.optionC, q.optionD],
+            voiceAccuracy: '95%',
+            status: 'Active'
+          }));
+          setQuestions(formatted);
+        }
+      } catch (err) {
+        console.warn('Backend query notice:', err.message);
+      }
+    }
+    loadCloudDatabase();
   }, []);
 
   // Initial Question Bank State

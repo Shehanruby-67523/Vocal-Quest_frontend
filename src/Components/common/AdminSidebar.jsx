@@ -1,13 +1,13 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { 
-  LayoutGrid, 
-  Users, 
-  Workflow, 
-  Database, 
-  LineChart, 
+import {
+  LayoutGrid,
+  Users,
+  Workflow,
+  Database,
+  LineChart,
   Rocket,
-  User 
+  User
 } from 'lucide-react';
 
 export default function AdminSidebar() {
@@ -51,8 +51,8 @@ export default function AdminSidebar() {
     <aside className="w-64 bg-[#0a0f1d] border-r border-slate-800/60 flex flex-col justify-between h-screen sticky top-0 py-6 select-none shrink-0 z-20">
       <div>
         {/* Brand Logo Header */}
-        <div 
-          onClick={() => navigate('/admin/command-center')} 
+        <div
+          onClick={() => navigate('/admin/command-center')}
           className="px-6 mb-8 flex flex-col items-start cursor-pointer group"
           title="Admin Command Center"
         >
@@ -72,17 +72,16 @@ export default function AdminSidebar() {
         {/* Sidebar Links */}
         <nav className="space-y-1.5 px-3">
           {menuItems.map((item) => {
-            const isActive = location.pathname === item.path || 
+            const isActive = location.pathname === item.path ||
               (item.path === '/admin/command-center' && (location.pathname === '/admin' || location.pathname === '/admin/'));
             return (
               <button
                 key={item.name}
                 onClick={() => navigate(item.path)}
-                className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-lg text-xs font-semibold transition-all duration-200 relative group ${
-                  isActive
-                    ? 'bg-[#18233c] text-gold-400'
-                    : 'text-slate-400 hover:bg-[#10192e] hover:text-slate-200'
-                }`}
+                className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-lg text-xs font-semibold transition-all duration-200 relative group ${isActive
+                  ? 'bg-[#18233c] text-gold-400'
+                  : 'text-slate-400 hover:bg-[#10192e] hover:text-slate-200'
+                  }`}
               >
                 {/* Active indicator bar */}
                 {isActive && (
@@ -115,14 +114,14 @@ export default function AdminSidebar() {
               adminName = nameStr;
               if (!avatarUrl && u.avatar) avatarUrl = u.avatar;
             }
-          } catch (e) {}
+          } catch (e) { }
 
           if (!avatarUrl) {
             avatarUrl = `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(adminName)}`;
           }
 
           return (
-            <div 
+            <div
               onClick={() => navigate('/admin/profile')}
               className="p-2.5 bg-[#18233c] hover:bg-[#1f2e4e] border border-[#d9b74f]/30 rounded-xl flex items-center gap-3 cursor-pointer transition group"
               title="Click to view Admin Profile"

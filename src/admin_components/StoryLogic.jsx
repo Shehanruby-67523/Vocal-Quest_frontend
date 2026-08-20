@@ -5,6 +5,7 @@ import {
   Workflow, 
   Database, 
   LineChart, 
+  Users,
   Settings, 
   Search, 
   Bell, 
@@ -239,6 +240,14 @@ export default function StoryLogic() {
               >
                 <LayoutGrid size={16} />
                 <span>Command Center</span>
+              </button>
+
+              <button
+                onClick={() => navigate('/admin/users')}
+                className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-[#CBD5E1] hover:text-white hover:bg-slate-800/50 transition cursor-pointer"
+              >
+                <Users size={16} />
+                <span>User Management</span>
               </button>
 
               <button

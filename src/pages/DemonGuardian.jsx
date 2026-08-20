@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Lightbulb, Flag, Check, X, Trophy, ArrowRight, RotateCcw } from 'lucide-react'
 import Logo from '../Components/Logo'
 import { useSpeechSynthesis } from '../hooks/useSpeechSynthesis'
+import { apiRequest } from '../api/apiClient'
 
 // Game Questions conforming to the Gatekeeper's Challenge Quiz
 const QUESTIONS = [
@@ -49,15 +50,125 @@ const hasSpeechSupport = typeof window !== 'undefined' && !!(window.SpeechRecogn
 function DemonGuardian() {
   const navigate = useNavigate()
 
-  // Encounter Flow: starts directly at 'QUIZ' to match the uploaded figma mockup exactly
-  const [encounterState, setEncounterState] = useState('QUIZ')
+  // Encounter Flow: starts directly at 'QUIZ' or restores from localStorage on refresh
+  const [encounterState, setEncounterState] = useState(() => {
+    try {
+      const saved = localStorage.getItem('vocal_quest_demon_quiz_state');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.encounterState) return parsed.encounterState;
+      }
+    } catch (e) {}
+    return 'QUIZ';
+  });
 
-  // Quiz & standing states
-  const [score, setScore] = useState(32) // Starts at 32/50 as shown in Figma screenshot
-  const [currentIdx, setCurrentIdx] = useState(0)
+  // Quiz questions state (starts with story questions, syncs with Neon PostgreSQL API if backend available)
+  const [quizQuestions, setQuizQuestions] = useState(QUESTIONS)
+
+  // Fetch 50 questions from Neon PostgreSQL API (Step 5)
+  useEffect(() => {
+    async function loadQuestionsFromCloud() {
+      try {
+        let data = null;
+        try {
+          data = await apiRequest('/quiz/questions');
+        } catch (e) {
+          const response = await fetch('http://localhost:5000/api/quiz/questions');
+          data = await response.json();
+        }
+
+        if (data && data.success && Array.isArray(data.questions) && data.questions.length > 0) {
+          const cleanVal = (str) => (str || '').replace(/^option\s+[a-d][:\s\-]*/i, '').trim().toLowerCase();
+
+          const formatted = data.questions.map((q, idx) => {
+            const optA = q.optionA || q.option_a || 'Option A';
+            const optB = q.optionB || q.option_b || 'Option B';
+            const optC = q.optionC || q.option_c || 'Option C';
+            const optD = q.optionD || q.option_d || 'Option D';
+            const corr = q.correctAnswer || q.correct_answer || optA;
+
+            const cleanCorr = cleanVal(corr);
+            const pureA = cleanVal(optA);
+            const pureB = cleanVal(optB);
+            const pureC = cleanVal(optC);
+            const pureD = cleanVal(optD);
+
+            const isOptACorrect = corr === optA || corr === 'A' || corr === 'Option A' || (pureA && cleanCorr && (pureA === cleanCorr || pureA.includes(cleanCorr) || cleanCorr.includes(pureA)));
+            const isOptBCorrect = corr === optB || corr === 'B' || corr === 'Option B' || (pureB && cleanCorr && (pureB === cleanCorr || pureB.includes(cleanCorr) || cleanCorr.includes(pureB)));
+            const isOptCCorrect = corr === optC || corr === 'C' || corr === 'Option C' || (pureC && cleanCorr && (pureC === cleanCorr || pureC.includes(cleanCorr) || cleanCorr.includes(pureC)));
+            const isOptDCorrect = corr === optD || corr === 'D' || corr === 'Option D' || (pureD && cleanCorr && (pureD === cleanCorr || pureD.includes(cleanCorr) || cleanCorr.includes(pureD)));
+
+            const triggerKw = q.triggerKeywords || q.trigger_keywords;
+
+            return {
+              question: q.question,
+              stage: `GATEKEEPER'S QUIZ • STAGE ${idx + 1}`,
+              points: 1,
+              hint: triggerKw ? `Keywords: ${Array.isArray(triggerKw) ? triggerKw.join(', ') : triggerKw}` : "Listen carefully and choose the correct answer.",
+              options: [
+                { key: 'A', label: 'SELECT A', text: optA, pureText: pureA, isCorrect: isOptACorrect, theme: 'green' },
+                { key: 'B', label: 'SELECT B', text: optB, pureText: pureB, isCorrect: isOptBCorrect, theme: 'red' },
+                { key: 'C', label: 'SELECT C', text: optC, pureText: pureC, isCorrect: isOptCCorrect, theme: 'blue' },
+                { key: 'D', label: 'SELECT D', text: optD, pureText: pureD, isCorrect: isOptDCorrect, theme: 'yellow' }
+              ]
+            };
+          });
+          setQuizQuestions(formatted);
+        }
+      } catch (err) {
+        console.warn('Backend unavailable, using default story questions:', err.message);
+      }
+    }
+    loadQuestionsFromCloud();
+  }, []);
+
+  // Quiz & standing states - restored from localStorage on page refresh
+  const [score, setScore] = useState(() => {
+    try {
+      const saved = localStorage.getItem('vocal_quest_demon_quiz_state');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (typeof parsed.score === 'number') return parsed.score;
+      }
+    } catch (e) {}
+    return 0;
+  });
+
+  const [currentIdx, setCurrentIdx] = useState(() => {
+    try {
+      const saved = localStorage.getItem('vocal_quest_demon_quiz_state');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (typeof parsed.currentIdx === 'number') return parsed.currentIdx;
+      }
+    } catch (e) {}
+    return 0;
+  });
+
   const [selectedKey, setSelectedKey] = useState(null)
   const [isAnswered, setIsAnswered] = useState(false)
-  const [hintsLeft, setHintsLeft] = useState(3)
+  const [hintsLeft, setHintsLeft] = useState(() => {
+    try {
+      const saved = localStorage.getItem('vocal_quest_demon_quiz_state');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (typeof parsed.hintsLeft === 'number') return parsed.hintsLeft;
+      }
+    } catch (e) {}
+    return 3;
+  });
+
+  // Save current quiz progress to localStorage on change
+  useEffect(() => {
+    try {
+      localStorage.setItem('vocal_quest_demon_quiz_state', JSON.stringify({
+        currentIdx,
+        score,
+        encounterState,
+        hintsLeft
+      }));
+    } catch (e) {}
+  }, [currentIdx, score, encounterState, hintsLeft]);
   const [showHint, setShowHint] = useState(false)
   const [shakeCard, setShakeCard] = useState(false)
 
@@ -71,7 +182,7 @@ function DemonGuardian() {
   // Modal states
   const [showForfeitModal, setShowForfeitModal] = useState(false)
 
-  const currentQuestion = QUESTIONS[currentIdx]
+  const currentQuestion = quizQuestions[currentIdx] || QUESTIONS[currentIdx] || QUESTIONS[0]
   const targetScoreToPass = 40
 
   // References for Web Speech API to keep state and handlers fresh
@@ -79,13 +190,13 @@ function DemonGuardian() {
   const isSpeakingTTSRef = useRef(false)
   const speechCooldownUntilRef = useRef(0)
   const lastSpokenKeyRef = useRef('')
-  const stateRef = useRef({ encounterState, currentIdx, isAnswered, hintsLeft, selectedKey, score, showForfeitModal })
+  const stateRef = useRef({ encounterState, currentIdx, isAnswered, hintsLeft, selectedKey, score, showForfeitModal, quizQuestions })
   const voiceHandlerRef = useRef(null)
 
   // Keep stateRef fresh for speech recognition event handlers
   useEffect(() => {
-    stateRef.current = { encounterState, currentIdx, isAnswered, hintsLeft, selectedKey, score, showForfeitModal }
-  }, [encounterState, currentIdx, isAnswered, hintsLeft, selectedKey, score, showForfeitModal])
+    stateRef.current = { encounterState, currentIdx, isAnswered, hintsLeft, selectedKey, score, showForfeitModal, quizQuestions }
+  }, [encounterState, currentIdx, isAnswered, hintsLeft, selectedKey, score, showForfeitModal, quizQuestions])
 
   const { speak, stop } = useSpeechSynthesis()
 
@@ -106,7 +217,7 @@ function DemonGuardian() {
         isSpeakingTTSRef.current = true
         speak(textToSpeak, () => {
           isSpeakingTTSRef.current = false
-          speechCooldownUntilRef.current = Date.now() + 600 // 600ms post-narration cooldown
+          speechCooldownUntilRef.current = Date.now() + 1500 // 1500ms post-narration cooldown
         })
       } else if (encounterState === 'COMPLETED') {
         lastSpokenKeyRef.current = speechKey
@@ -115,7 +226,7 @@ function DemonGuardian() {
         isSpeakingTTSRef.current = true
         speak(completionText, () => {
           isSpeakingTTSRef.current = false
-          speechCooldownUntilRef.current = Date.now() + 600
+          speechCooldownUntilRef.current = Date.now() + 1500
         })
       }
     } else {
@@ -142,7 +253,7 @@ function DemonGuardian() {
         isSpeakingTTSRef.current = true
         speak(textToSpeak, () => {
           isSpeakingTTSRef.current = false
-          speechCooldownUntilRef.current = Date.now() + 600
+          speechCooldownUntilRef.current = Date.now() + 1500
         })
       } else if (encounterState === 'COMPLETED') {
         const passStatusText = score >= targetScoreToPass ? "Mastered and Passed." : "Did not meet pass score."
@@ -150,7 +261,7 @@ function DemonGuardian() {
         isSpeakingTTSRef.current = true
         speak(completionText, () => {
           isSpeakingTTSRef.current = false
-          speechCooldownUntilRef.current = Date.now() + 600
+          speechCooldownUntilRef.current = Date.now() + 1500
         })
       }
       if (recognitionRef.current) {
@@ -165,8 +276,12 @@ function DemonGuardian() {
     setSelectedKey(option.key)
     setIsAnswered(true)
 
+    const activeList = quizQuestions.length > 0 ? quizQuestions : QUESTIONS
+    const currentQ = activeList[stateRef.current.currentIdx]
+    const pointsPerQ = currentQ?.points || 1
+
     if (option.isCorrect) {
-      const newScore = stateRef.current.score + QUESTIONS[stateRef.current.currentIdx].points
+      const newScore = stateRef.current.score + pointsPerQ
       setScore(newScore)
       setSpeechFeedback(`Correct! Option ${option.key} accepted.`)
     } else {
@@ -177,7 +292,8 @@ function DemonGuardian() {
 
     // Auto-advance to the next question regardless of correctness after 2 seconds
     setTimeout(() => {
-      if (stateRef.current.currentIdx < QUESTIONS.length - 1) {
+      const totalCount = activeList.length
+      if (stateRef.current.currentIdx < totalCount - 1) {
         setCurrentIdx(prev => prev + 1)
         setSelectedKey(null)
         setIsAnswered(false)
@@ -209,9 +325,12 @@ function DemonGuardian() {
 
   // Reset encounter
   const handleReset = () => {
+    try {
+      localStorage.removeItem('vocal_quest_demon_quiz_state');
+    } catch (e) {}
     lastSpokenKeyRef.current = ''
     setEncounterState('QUIZ')
-    setScore(32)
+    setScore(0)
     setCurrentIdx(0)
     setSelectedKey(null)
     setIsAnswered(false)
@@ -223,9 +342,13 @@ function DemonGuardian() {
 
   // Voice Command routing
   const handleVoiceCommand = (transcript) => {
-    // DO NOT PROCESS IF ALREADY ANSWERED OR SYSTEM NARRATION IS SPEAKING
+    // DO NOT PROCESS IF ALREADY ANSWERED OR SYSTEM NARRATION IS SPEAKING OR IN POST-NARRATION COOLDOWN
     if (stateRef.current.isAnswered) return
-    if (isSpeakingTTSRef.current) {
+    if (
+      isSpeakingTTSRef.current ||
+      (typeof window !== 'undefined' && window.speechSynthesis && window.speechSynthesis.speaking) ||
+      Date.now() < speechCooldownUntilRef.current
+    ) {
       console.log("Ignored microphone input because Text-to-Speech narration is speaking.")
       return
     }
@@ -272,79 +395,112 @@ function DemonGuardian() {
 
     // 3. QUIZ STATE COMMANDS
     if (curState === 'QUIZ') {
-      const currentOptList = QUESTIONS[stateRef.current.currentIdx]?.options || []
+      const activeQList = stateRef.current.quizQuestions || QUESTIONS
+      const currentOptList = activeQList[stateRef.current.currentIdx]?.options || []
 
-      const optAText = currentOptList[0]?.text?.toLowerCase() || ''
-      const optBText = currentOptList[1]?.text?.toLowerCase() || ''
-      const optCText = currentOptList[2]?.text?.toLowerCase() || ''
-      const optDText = currentOptList[3]?.text?.toLowerCase() || ''
+      const checkMatch = (opt, keyLetter) => {
+        if (!opt) return false;
+        const letter = keyLetter.toLowerCase();
+        const rawText = (opt.text || '').toLowerCase();
+        // Remove option prefixes ("Option A:", "Option A -", etc.) and punctuation
+        const pureVal = (opt.pureText || rawText.replace(/^option\s+[a-d][:\s\-]*/i, '')).trim().toLowerCase();
 
-      const isTextMatch = (textStr) => {
-        if (!textStr) return false
-        const words = textStr.split(/\s+/)
-        return cleanTranscript.includes(textStr) || words.some(w => w.length > 2 && cleanTranscript.includes(w))
-      }
+        // 1. Direct Option Letter Triggers ("Option A", "Select A", "Choice A", "Answer A", "A", "Alpha")
+        if (
+          cleanTranscript === letter ||
+          cleanTranscript.startsWith(`option ${letter}`) ||
+          cleanTranscript.startsWith(`select ${letter}`) ||
+          cleanTranscript.startsWith(`choice ${letter}`) ||
+          cleanTranscript.startsWith(`answer ${letter}`) ||
+          cleanTranscript.startsWith(`letter ${letter}`) ||
+          cleanTranscript.endsWith(`option ${letter}`) ||
+          cleanTranscript.endsWith(`select ${letter}`) ||
+          (letter === 'a' && (cleanTranscript === 'alpha' || cleanTranscript === 'option alpha')) ||
+          (letter === 'b' && (cleanTranscript === 'bravo' || cleanTranscript === 'option bravo')) ||
+          (letter === 'c' && (cleanTranscript === 'charlie' || cleanTranscript === 'option charlie')) ||
+          (letter === 'd' && (cleanTranscript === 'delta' || cleanTranscript === 'option delta'))
+        ) {
+          return true;
+        }
 
-      // Option A Triggers ("Option A", "Select A", "Alpha", or option text words)
-      const matchA =
-        cleanTranscript === 'a' ||
-        cleanTranscript.includes('option a') ||
-        cleanTranscript.includes('select a') ||
-        cleanTranscript.includes('choice a') ||
-        cleanTranscript.includes('answer a') ||
-        cleanTranscript.includes('alpha') ||
-        isTextMatch(optAText)
+        // 2. Direct Spoken Answer Text Matching with Universal Normalization
+        if (pureVal && pureVal.length > 0) {
+          const cleanPure = pureVal.replace(/[°.,#!?()-]/g, "").trim();
 
-      // Option B Triggers ("Option B", "Select B", "Bravo", or option text words)
-      const matchB =
-        cleanTranscript === 'b' ||
-        cleanTranscript.includes('option b') ||
-        cleanTranscript.includes('select b') ||
-        cleanTranscript.includes('choice b') ||
-        cleanTranscript.includes('answer b') ||
-        cleanTranscript.includes('bravo') ||
-        isTextMatch(optBText)
+          // Exact or substring match (e.g. user says "green", "paris", "mars", "sodium", "javascript")
+          if (cleanTranscript === cleanPure || cleanTranscript.includes(cleanPure) || cleanPure.includes(cleanTranscript)) {
+            return true;
+          }
 
-      // Option C Triggers ("Option C", "Select C", "Charlie", or option text words)
-      const matchC =
-        cleanTranscript === 'c' ||
-        cleanTranscript.includes('option c') ||
-        cleanTranscript.includes('select c') ||
-        cleanTranscript.includes('choice c') ||
-        cleanTranscript.includes('answer c') ||
-        cleanTranscript.includes('charlie') ||
-        isTextMatch(optCText)
+          // Universal Synonym & Chemical Symbol & Year Dictionary
+          const synonymMap = {
+            'au': ['gold'],
+            'na': ['sodium'],
+            'co2': ['carbon dioxide', 'co2'],
+            '7': ['seven'],
+            '8': ['eight'],
+            '6': ['six'],
+            '5': ['five'],
+            '0': ['zero', '0 degrees', 'zero degrees', '0c'],
+            '11': ['eleven'],
+            '12': ['twelve'],
+            '9': ['nine'],
+            '10': ['ten'],
+            '1945': ['nineteen forty five', 'nineteen 45', '1945'],
+            '1943': ['nineteen forty three'],
+            '1947': ['nineteen forty seven'],
+            '1950': ['nineteen fifty'],
+            '1918': ['nineteen eighteen'],
+            'javascript': ['js'],
+            'wcag': ['web content accessibility guidelines'],
+            'http': ['hypertext transfer protocol'],
+            'pk': ['primary key'],
+            'fifo': ['first in first out', 'queue']
+          };
 
-      // Option D Triggers ("Option D", "Select D", "Delta", or option text words)
-      const matchD =
-        cleanTranscript === 'd' ||
-        cleanTranscript.includes('option d') ||
-        cleanTranscript.includes('select d') ||
-        cleanTranscript.includes('choice d') ||
-        cleanTranscript.includes('answer d') ||
-        cleanTranscript.includes('delta') ||
-        isTextMatch(optDText)
+          for (const [key, alts] of Object.entries(synonymMap)) {
+            if (cleanPure === key || cleanPure.includes(key)) {
+              if (alts.some(alt => cleanTranscript.includes(alt))) {
+                return true;
+              }
+            }
+          }
+
+          // Word-by-word match for multi-word answers (e.g. "William Shakespeare" -> user says "Shakespeare")
+          const pureWords = cleanPure.split(/\s+/).filter(w => w.length > 1 && w !== 'option' && w !== 'select' && w !== 'choice');
+          if (pureWords.length > 0 && pureWords.some(w => cleanTranscript.includes(w))) {
+            return true;
+          }
+        }
+
+        return false;
+      };
+
+      const matchA = checkMatch(currentOptList[0], 'a');
+      const matchB = checkMatch(currentOptList[1], 'b');
+      const matchC = checkMatch(currentOptList[2], 'c');
+      const matchD = checkMatch(currentOptList[3], 'd');
 
       if (matchA) {
-        setSpeechFeedback(`Heard voice command: "${cleanTranscript}"`)
+        setSpeechFeedback(`🗣️ Identified Spoken Answer: "${cleanTranscript}" -> Option A`)
         setRecognizedCommand(cleanTranscript)
         setWavePulse(true)
         setTimeout(() => setWavePulse(false), 1200)
         selectOption(currentOptList[0])
       } else if (matchB) {
-        setSpeechFeedback(`Heard voice command: "${cleanTranscript}"`)
+        setSpeechFeedback(`🗣️ Identified Spoken Answer: "${cleanTranscript}" -> Option B`)
         setRecognizedCommand(cleanTranscript)
         setWavePulse(true)
         setTimeout(() => setWavePulse(false), 1200)
         selectOption(currentOptList[1])
       } else if (matchC) {
-        setSpeechFeedback(`Heard voice command: "${cleanTranscript}"`)
+        setSpeechFeedback(`🗣️ Identified Spoken Answer: "${cleanTranscript}" -> Option C`)
         setRecognizedCommand(cleanTranscript)
         setWavePulse(true)
         setTimeout(() => setWavePulse(false), 1200)
         selectOption(currentOptList[2])
       } else if (matchD) {
-        setSpeechFeedback(`Heard voice command: "${cleanTranscript}"`)
+        setSpeechFeedback(`🗣️ Identified Spoken Answer: "${cleanTranscript}" -> Option D`)
         setRecognizedCommand(cleanTranscript)
         setWavePulse(true)
         setTimeout(() => setWavePulse(false), 1200)
@@ -381,6 +537,17 @@ function DemonGuardian() {
 
     rec.onresult = (event) => {
       if (!active) return
+
+      // IGNORE MICROPHONE INPUT WHILE SYSTEM NARRATION IS SPEAKING OR IN POST-NARRATION COOLDOWN BUFFER
+      if (
+        isSpeakingTTSRef.current ||
+        (typeof window !== 'undefined' && window.speechSynthesis && window.speechSynthesis.speaking) ||
+        Date.now() < speechCooldownUntilRef.current
+      ) {
+        console.log('Ignored microphone input while system narrator is speaking.')
+        return
+      }
+
       let fullTranscript = ''
       for (let i = 0; i < event.results.length; i++) {
         fullTranscript += ' ' + event.results[i][0].transcript
@@ -545,15 +712,19 @@ function DemonGuardian() {
               <div className="flex-1">
                 <p className="text-[10px] font-black tracking-[0.25em] text-[#cba33f] uppercase">CURRENT STANDING</p>
                 <div className="flex items-baseline gap-2 mt-1">
-                  <h2 className="text-4xl font-extrabold text-white tracking-tight">Score: {score}/50</h2>
-                  <span className="text-xs font-semibold text-[#8e9bb0]">{Math.round((score / 50) * 100)}% Mastery</span>
+                  <h2 className="text-4xl font-extrabold text-white tracking-tight">
+                    Score: {score}/{quizQuestions.length > 0 ? quizQuestions.length : 50}
+                  </h2>
+                  <span className="text-xs font-semibold text-[#8e9bb0]">
+                    {Math.round((score / (quizQuestions.length || 50)) * 100)}% Mastery
+                  </span>
                 </div>
                 {/* Custom Progress Bar */}
                 <div className="relative mt-4 h-3 w-full rounded-full bg-[#0c1a30] overflow-hidden border border-slate-800">
                   {/* Filled gold bar */}
                   <div
                     className="h-full bg-gradient-to-r from-[#dcae3a] to-[#f4d16d] rounded-full transition-all duration-500 shadow-[0_0_8px_rgba(220,174,58,0.3)]"
-                    style={{ width: `${(score / 50) * 100}%` }}
+                    style={{ width: `${Math.min(100, Math.max(0, (score / (quizQuestions.length || 50)) * 100))}%` }}
                   />
                   {/* Requirement tick line at 80% */}
                   <div
@@ -594,7 +765,7 @@ function DemonGuardian() {
 
               {/* Quiz Tag & Progress */}
               <p className="text-center text-[10px] font-black uppercase tracking-[0.25em] text-[#cba33f]/95">
-                QUESTION {currentIdx + 1} OF {QUESTIONS.length} • {currentQuestion.stage}
+                QUESTION {currentIdx + 1} OF {quizQuestions.length} • {currentQuestion.stage}
               </p>
             </div>
 

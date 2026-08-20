@@ -52,6 +52,7 @@ function App() {
         <Route path="/admin" element={<Navigate to="/admin/command-center" replace />} />
         <Route path="/admin/command-center" element={<CommandCenter />} />
         <Route path="/admin/users" element={<UserManagement />} />
+        <Route path="/admin/user-management" element={<UserManagement />} />
         <Route path="/admin/story-logic" element={<StoryLogicPage />} />
         <Route path="/admin/quiz-database" element={<QuizDatabase />} />
         <Route path="/admin/game-analytics" element={<GameAnalytics />} />
